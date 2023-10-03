@@ -9,6 +9,12 @@ $MachineName     = 'WS01'
 # Get-LabAvailableOperatingSystem will list all available OSes to you
 $OperatingSystem = 'Windows 10 Enterprise Evaluation'
 
+# Port forward RDP access to the lab machine to make it accessible externally
+#$LPORT = "3490"
+#$RHOST = "10.10.X.3"
+
+#netsh interface portproxy add v4tov4 listenport=$LPORT listenaddress=0.0.0.0 connectport=3389 connectaddress=$RHOST
+
 #--------------------------------------------------------------------------------------------------------------------
 # LAB CREATION
 # Create our lab using HyperV (Azure is also supported)
@@ -42,7 +48,8 @@ $WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp #
 # MACHINE CREATION - https://automatedlab.org/en/latest/Wiki/Basic/addmachines/
 
 # For the workstation, use Get-LabAvailableOperatingSystem to get correct OS name
-Add-LabMachineDefinition -Name $MachineName -NetworkAdapter $WS1NICs -OperatingSystem $OperatingSystem
+$VSRole = Get-LabPostInstallationActivity -CustomRole VisualStudio2022
+Add-LabMachineDefinition -Name $MachineName -NetworkAdapter $WS1NICs -OperatingSystem $OperatingSystem -PostInstallationActivity $VSRole
 
 # Install our lab, has flags for level of output
 Install-Lab # -Verbose -Debug
