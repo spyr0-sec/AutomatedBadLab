@@ -64,9 +64,6 @@ New-Pre2KComputerAccount -Verbose
 # ATTACK - Enable Anonymous LDAP Read Access
 Enable-AnonymousLDAP
 
-# ATTACK - Enable NTLMv1
-Enable-NTLMv1
-
 # Secondary Attack Vectors ----------------------------------------------------
 # Now employ multiple attack vectors on our vulnerable users
 
@@ -106,3 +103,17 @@ If (Get-ADObject -Filter { ObjectClass -eq 'certificationAuthority' } -SearchBas
    Set-ESC5 -VulnUsers $VulnUsers -Verbose
    Set-ESC7 -VulnUsers $VulnUsers -Verbose
 }
+
+# Machine Attack Vectors ------------------------------------------------------
+
+# ATTACK - Enable NTLMv1
+Enable-NTLMv1
+
+# ATTACK - Disable SMB Signing
+Disable-SMBSigning
+
+# ATTACK - Enable SMB Reflection
+Enable-Reflection
+
+# Apply Changes
+Restart-Computer

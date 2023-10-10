@@ -29,6 +29,8 @@ VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[msDS-Al
     - Timeroasting
 - "Secondary"
     - SMB Signing
+    - Machine Coercion
+    - SMB Reflection 
     - Weak Kerberos Crytography
     - NTLMv1
     - DACL Attacks
