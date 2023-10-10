@@ -133,5 +133,8 @@ Invoke-LabCommand -ComputerName BLWS01 -ActivityName RemoveDefender -FileName 'R
 Write-ScreenInfo "Enabling Auto-enrollment for Certificates"
 Enable-LabCertificateAutoenrollment -Computer -User -CodeSigning
 
+# Take a snapshot of the DC in a working state
+Checkpoint-LabVM -ComputerName BBDC01 -SnapshotName "$(Get-Date) - AutomatedBadLab Complete"
+
 # Provides a pretty table detailing all elements of what has been created
 Show-LabDeploymentSummary -Detailed
