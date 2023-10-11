@@ -64,9 +64,10 @@ Function New-BLComputer {
                 -Path $OUPath
         }
 
-        # Show progress to the user
-        Write-Progress -Activity "Creating $ComputerCount Computers Objects.." -Status "Progress:" -PercentComplete ($CreatedComputers / $ComputerCount * 100)
+        # Track progress
+        Write-Progress -Id 1 -Activity "Creating AD Computers.." -Status "Creating Group $CreatedComputers of $ComputerCount" `
+        -CurrentOperation $Name -PercentComplete ($CreatedComputers / $ComputerCount * 100)
     }
 }
 
-Write-Progress -Activity "Created Computer Objects.." -Completed
+Write-Progress -Id 1 -Activity "Created AD Computers" -Completed

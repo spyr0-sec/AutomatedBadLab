@@ -25,10 +25,6 @@ Function New-BLGroup {
         # Pick a random entry from Groups.txt to use as the group name
         $GroupName = Get-Content -Path (Join-Path $PSScriptRoot 'Groups.txt') | Get-Random
 
-        # Track progress
-        Write-Progress -Activity "Creating AD Groups" -Status "Creating Group $CreatedGroups of $GroupCount" `
-        -CurrentOperation $GroupName -PercentComplete ($CreatedGroups / $GroupCount * 100)
-
         # If the group already exists, break out of the loop and try again
         If (Get-ADGroup -Filter { SamAccountName -eq $GroupName }) {
             Break
@@ -47,7 +43,11 @@ Function New-BLGroup {
 
         # Create the group
         New-ADGroup -Name $GroupName -Description $Description -Path $OUPath -GroupCategory $GroupCategory -GroupScope $GroupScope -ManagedBy $Owner
+
+        # Track progress
+        Write-Progress -Id 1 -Activity "Creating AD Groups.." -Status "Creating Group $CreatedGroups of $GroupCount" `
+        -CurrentOperation $GroupName -PercentComplete ($CreatedGroups / $GroupCount * 100)
     } 
 }
 
-Write-Progress -Activity "Created Group Objects.." -Completed
+Write-Progress -Id 1 -Activity "Created AD Groups" -Completed

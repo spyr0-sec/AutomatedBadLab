@@ -15,13 +15,13 @@ foreach ($User in $ADUsers)
     If ($User.description -contains $BLPassDesc -or $User.description -contains $BLUserDesc) 
     {
         $counter++
-        Write-Progress -Activity "Deleting AutomatedBadLab Users.." -CurrentOperation $User.Name -PercentComplete (($counter / $ADUsers.count) * 100)
+        Write-Progress -Id 1 -Activity "Deleting AutomatedBadLab Users.." -CurrentOperation $User.Name -PercentComplete (($counter / $ADUsers.count) * 100)
         Remove-ADUser -Identity $User -Confirm:$False
     }
 }
 
 # To close the progress bar at the end
-Write-Progress -Activity "Deleting AutomatedBadLab Users.." -Completed
+Write-Progress -Id 1 -Activity "Deleting AutomatedBadLab Users.." -Status "Completed" -PercentComplete 100 -Completed
 
 # Get all AutomatedBadLab generated computers and delete
 $ADComputers = Get-ADComputer -Filter * -Properties Description
@@ -33,7 +33,7 @@ foreach ($Computer in $ADComputers)
     If ($Computer.description -like '*AutomatedBadLab*') 
     {
         $counter++
-        Write-Progress -Activity "Deleting AutomatedBadLab Computers.." -CurrentOperation $Computer.Name -PercentComplete (($counter / $ADComputers.count) * 100)
+        Write-Progress -Id 2 -Activity "Deleting AutomatedBadLab Computers.." -CurrentOperation $Computer.Name -PercentComplete (($counter / $ADComputers.count) * 100)
         Remove-ADComputer -Identity $Computer -Confirm:$False
     }
     Else # Move them back into default container in case they had moved to LAPS OU
@@ -43,7 +43,7 @@ foreach ($Computer in $ADComputers)
 }
 
 # To close the progress bar at the end
-Write-Progress -Activity "Deleting AutomatedBadLab Computers.." -Completed
+Write-Progress -Id 2 -Activity "Deleting AutomatedBadLab Computers.." -Status "Completed" -PercentComplete 100 -Completed
 
 # Get all AutomatedBadLab generated groups and delete
 $ADGroups = Get-ADGroup -Filter * -Properties Description
@@ -55,13 +55,13 @@ foreach ($Group in $ADGroups)
     If ($($Group.Description) -contains $BLGroupDesc) 
     {
         $counter++
-        Write-Progress -Activity "Deleting AutomatedBadLab Groups.." -CurrentOperation $Group.Name -PercentComplete (($counter / $ADGroups.count) * 100)
+        Write-Progress -Id 3 -Activity "Deleting AutomatedBadLab Groups.." -CurrentOperation $Group.Name -PercentComplete (($counter / $ADGroups.count) * 100)
         Remove-ADGroup -Identity $Group -Confirm:$False
     }
 }
 
 # To close the progress bar at the end
-Write-Progress -Activity "Deleting AutomatedBadLab Groups.." -Completed
+Write-Progress -Id 3 -Activity "Deleting AutomatedBadLab Groups.." -Status "Completed" -PercentComplete 100 -Completed
 
 # Remove all AutomatedBadLab generated service accounts
 foreach ($ServiceAccount in Get-ADServiceAccount -Filter *) {
@@ -107,15 +107,14 @@ foreach ($OU in $TopLevelOUs) {
     
     # Update progress
     $counter++
-    Write-Progress -Activity "Deleting OUs and Child Objects.." -CurrentOperation $OU -PercentComplete (($counter / $TopLevelOUs.count) * 100)
+    Write-Progress -Id 4 -Activity "Deleting OUs and Child Objects.." -CurrentOperation $OU -PercentComplete (($counter / $TopLevelOUs.count) * 100)
 }
 
 # To close the progress bar at the end
-Write-Progress -Activity "Deleting OUs and Child Objects.." -Completed
+Write-Progress -Id 4 -Activity "Deleting OUs and Child Objects.." -Status "Completed" -PercentComplete 100 -Completed
 
 # Remove GPOs
-Remove-GPO -Name "KerberosEncryptionGPO"
-Remove-GPO -Name "LAPS Policy GPO" 
+Get-GPO -All | Where-Object { $_.Description -like "*AutomatedBadLab*" } | Remove-GPO
 
 # Cleanup all ADCS Objects
 $CertAuthority = (Get-LabVM -Role CaRoot)

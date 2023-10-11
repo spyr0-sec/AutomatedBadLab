@@ -92,7 +92,7 @@ foreach ($vmName in $UpdateVMs) {
     Write-ScreenInfo "Waiting for $vmName to restart..."
 
     do {
-        Write-Progress -Activity "Updating Windows" -Status "Waiting for Reboot" 
+        Write-Progress -Id 1 -Activity "Updating Windows" -Status "Waiting for Reboot" 
         Start-Sleep -Seconds 60
         $currentUptime = (Get-VM -Name $vmName).Uptime
 
@@ -102,7 +102,7 @@ foreach ($vmName in $UpdateVMs) {
     Write-ScreenInfo "$vmName has restarted!"
 }
 
-Write-Progress -Activity "Updating Windows" -Completed
+Write-Progress -Id 1 -Activity "Updating Windows" -Status "Completed" -PercentComplete 100
 Write-ScreenInfo "Waiting five minutes for the machines to become active again before continuing"
 Start-Sleep -Seconds 300
 

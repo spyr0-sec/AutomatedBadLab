@@ -41,7 +41,7 @@
         }
 
         # Track progress
-        Write-Progress -Activity "Creating AD Users" -Status "Creating User $CreatedUsers of $UserCount" `
+        Write-Progress -Id 1 -Activity "Creating AD Users.." -Status "Creating User $CreatedUsers of $UserCount" `
         -CurrentOperation $Username -PercentComplete ($CreatedUsers / $UserCount * 100)
 
         $UPN = "$Username@$((Get-AdDomain).Forest)"
@@ -65,4 +65,4 @@
     }
 }
 
-Write-Progress -Activity "Created User Objects.." -Completed
+Write-Progress -Id 1 -Activity "Created AD Users" -Completed

@@ -26,7 +26,7 @@
 
         # Update progress
         $counter++
-        Write-Progress -Activity "Creating OUs and Child Objects.." -CurrentOperation $name -PercentComplete (($counter / $TopLevelOUs.count) * 100)
+        Write-Progress -Id 1 -Activity "Creating OUs and Child Objects.." -CurrentOperation $name -PercentComplete (($counter / $TopLevelOUs.count) * 100)
 
         # Create Sub OUs for Admin
         if ($name -eq 'Admin') {
@@ -90,5 +90,5 @@
         }
     }
     # To close the progress bar at the end
-    Write-Progress -Activity "Creating OUs and Child Objects.." -Completed
+    Write-Progress -Id 1 -Activity "Creating OUs and Child Objects.." -Status "Completed" -PercentComplete 100 -Completed
 }
