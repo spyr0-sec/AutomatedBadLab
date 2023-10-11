@@ -127,8 +127,13 @@ Copy-LabFileItem -ComputerName BLWS01 -Path $CustomScripts\RemoveWindowsDefender
 # Run the batch file as TrustedInstaller via Scheduled Task
 Invoke-LabCommand -ComputerName BLWS01 -ActivityName RemoveDefender -FileName 'Remove-WindowsDefender.ps1' -DependencyFolderPath $CustomScripts\RemoveWindowsDefender
 
-# Debugging - Remove all objects created by AutomatedBadLab
-#Invoke-LabCommand -ComputerName BLDC01 -ActivityName RemoveAutomatedBadLab -FileName Remove-AllBLObjects -DependencyFolderPath $CustomScripts\AutomatedBadLab\AD_Delete_All
+<# Debugging - Remove all objects created by AutomatedBadLab
+Invoke-LabCommand -ComputerName BBDC01 -ActivityName RemoveAutomatedBadLab -FileName Remove-AllBLADObjects -DependencyFolderPath $CustomScripts\AutomatedBadLab\AD_Delete_All
+
+Write-ScreenInfo "Removing Insecure ADCS Templates" # Runs locally
+. "$CustomScripts\AutomatedBadLab\ADCS_Delete_All\Remove-AllBLADCSObjects.ps1"
+Remove-AllBLADCSObjects
+#>
 
 Write-ScreenInfo "Enabling Auto-enrollment for Certificates"
 Enable-LabCertificateAutoenrollment -Computer -User -CodeSigning
