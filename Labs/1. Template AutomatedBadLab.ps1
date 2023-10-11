@@ -102,7 +102,7 @@ foreach ($vmName in $UpdateVMs) {
     Write-ScreenInfo "$vmName has restarted!"
 }
 
-Write-Progress -Id 1 -Activity "Updating Windows" -Status "Completed" -PercentComplete 100
+Write-Progress -Id 1 -Activity "Updating Windows" -Status "Completed" -PercentComplete 100 -Completed
 Write-ScreenInfo "Waiting five minutes for the machines to become active again before continuing"
 Start-Sleep -Seconds 300
 
