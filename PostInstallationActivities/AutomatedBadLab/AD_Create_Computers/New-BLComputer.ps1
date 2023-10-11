@@ -65,7 +65,7 @@ Function New-BLComputer {
         }
 
         # Track progress
-        Write-Progress -Id 1 -Activity "Creating AD Computers.." -Status "Creating Group $CreatedComputers of $ComputerCount" `
+        Write-Progress -Id 1 -Activity "Creating AD Computers.." -Status "Creating Computer $CreatedComputers of $ComputerCount" `
         -CurrentOperation $Name -PercentComplete ($CreatedComputers / $ComputerCount * 100)
     }
 }
