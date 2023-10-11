@@ -11,7 +11,7 @@ Out of the box this will provision (quanities configurable in Invoke-AutomatedBa
 - Randomise group memberships & permissions
 - Implement ATTACK vectors
 
-Details of which user accounts and their vulnerabilities will be outputted as verbose strings as seen in the example below:
+Details of which user accounts and their vulnerabilities will be outputted as verbose strings as seen in the example below as well as within a Transcript log file:
 ```
 VERBOSE: Setting SPN 'HOST/LAPTOP-AA490611.badblood.uk' for Nancie.Holmes 
 VERBOSE: Nancie.Holmes has the password 'JukI_G9;{Fh>i*7;.SWM]L' in their description field 

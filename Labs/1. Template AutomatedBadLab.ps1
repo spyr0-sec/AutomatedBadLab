@@ -112,7 +112,9 @@ Write-ScreenInfo "Creating GPPPassword files"
 Copy-LabFileItem -ComputerName BLDC01 -Recurse -Path $CustomScripts\AutomatedBadLab\AD_Attack_Vectors\GPPPassword\ -Destination "C:\Windows\Sysvol\sysvol\$Domain\Policies" -Verbose
 
 Write-ScreenInfo "Creating Domain structure and objects via AutomatedBadLab"
+Start-Transcript -Append -Path "$CustomScripts\AutomatedBadLab\$(Get-Date -f 'yyyy_MM_dd')_AutomatedBadLab.log"
 Invoke-LabCommand -ComputerName BLDC01 -ActivityName InvokeAutomatedBadLab -FileName Invoke-AutomatedBadLab.ps1 -DependencyFolderPath $CustomScripts\AutomatedBadLab
+Stop-Transcript
 
 Write-ScreenInfo "Creating Insecure ADCS Templates"
 . "$CustomScripts\AutomatedBadLab\ADCS_Attack_Vectors\New-WeakADCSTemplates.ps1"
