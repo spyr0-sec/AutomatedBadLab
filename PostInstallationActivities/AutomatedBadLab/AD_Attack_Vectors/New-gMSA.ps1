@@ -27,5 +27,5 @@ Function New-gMSA {
             "http/$Name/$((Get-AdDomain).Forest)", `
             "http/$Name/$((Get-AdDomain).NetBIOSName)"
     
-    Write-Verbose "$gMSAUser can retrieve $Name gMSA password"
+    Write-Host "    [+] $gMSAUser can retrieve $Name gMSA password" -ForegroundColor Yellow
 }

@@ -10,5 +10,5 @@
     # Force DES Kerberos encryption for a weak user
     $DESUser = $VulnUsers | Get-Random
     Get-ADUser $DESUser | Set-ADAccountControl -UseDESKeyOnly $True
-    Write-Verbose "Configured $DESUser to use DES Kerberos encryption"
+    Write-Host "    [+] Configured $DESUser to use DES Kerberos encryption" -ForegroundColor Yellow
 }

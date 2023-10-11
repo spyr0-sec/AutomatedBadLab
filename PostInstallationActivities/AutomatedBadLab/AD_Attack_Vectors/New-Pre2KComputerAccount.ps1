@@ -1,8 +1,5 @@
 ﻿Function New-Pre2KComputerAccount {
 
-    [CmdletBinding()] # Required for -Verbose flag to work
-    param ()
-
     Write-Host "  [+] Creating a Pre 2k Computer Account" -ForegroundColor Green
 
     # Common variables
@@ -30,5 +27,5 @@
     # Doesn't seem to create it with the PASSWD_NOTREQD flag set so set it manually
     Get-ADComputer $Name | Set-ADAccountControl -PasswordNotRequired $True
 
-    Write-Verbose "$Name computer created with the password $($Name.ToLower())"
+    Write-Host "    [+] $Name computer created with the password $($Name.ToLower())" -ForegroundColor Yellow
 }

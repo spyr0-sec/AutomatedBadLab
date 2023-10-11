@@ -12,5 +12,5 @@ Function New-DNSAdmin {
     # Add a weak user to DNS admins group for domain privilege escalation
     $DNSAdmin = $VulnUsers | Get-Random
     Add-ADGroupMember -Identity DNSAdmins -Members $DNSAdmin
-    Write-Verbose "Added $DNSAdmin to DNSAdmins group"
+    Write-Host "    [+] Added $DNSAdmin to DNSAdmins group" -ForegroundColor Yellow
 }

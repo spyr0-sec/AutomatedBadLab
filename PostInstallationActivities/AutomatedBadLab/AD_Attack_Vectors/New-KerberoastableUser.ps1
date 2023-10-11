@@ -17,7 +17,7 @@
         $BLUser = Get-ADUser -Filter {Description -like "*AutomatedBadLab*" -and ServicePrincipalNames -notlike "*"} -Property ServicePrincipalNames | Get-Random
         $SPN = "$($ServiceClass | Get-Random)/$BLComputer"
 
-        Write-Verbose "Setting SPN '$SPN' for $($BLUser.SamAccountName)"
+        Write-Host "    [+] Setting SPN '$SPN' for $($BLUser.SamAccountName)" -ForegroundColor Yellow
             
         Try { 
             $BLUser | Set-ADUser -ServicePrincipalNames @{Add = $SPN } -ErrorAction Stop

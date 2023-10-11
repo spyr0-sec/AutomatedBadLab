@@ -16,7 +16,7 @@ Function New-Owner {
     # Get the ACL for the victim user
     $OwnerVictimUserACL = Get-Acl -Path "AD:\$($OwnerVictimUser.DistinguishedName)"
 
-    Write-Verbose "$($VulnUser.SamAccountName) owns $($OwnerVictimUser.DistinguishedName)"
+    Write-Host "    [+] $($VulnUser.SamAccountName) owns $($OwnerVictimUser.DistinguishedName)" -ForegroundColor Yellow
 
     # Set the owner of the victim user to the vulnerable user
     $OwnerVictimUserACL.SetOwner([System.Security.Principal.NTAccount]"$((Get-ADDomain).NetBIOSName)\$($VulnUser.samAccountName)")
@@ -28,6 +28,6 @@ Function New-Owner {
 
     $OwnerVictimComputerACL.SetOwner([System.Security.Principal.NTAccount]"$((Get-ADDomain).NetBIOSName)\$($VulnUser.samAccountName)")
 
-    Write-Verbose "$($VulnUser.SamAccountName) owns $($OwnerVictimComputer.DistinguishedName)"
+    Write-Host "    [+] $($VulnUser.SamAccountName) owns $($OwnerVictimComputer.DistinguishedName)" -ForegroundColor Yellow
 
 }

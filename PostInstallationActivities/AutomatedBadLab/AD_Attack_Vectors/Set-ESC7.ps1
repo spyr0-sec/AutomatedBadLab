@@ -19,10 +19,10 @@ Function Set-ESC7 {
         $VulnUser = Get-ADUser -Identity $VulnUser
 
         If ($AccessMask -eq 1) {
-            Write-Verbose "Providing $($VulnUser.SamAccountName) with ManageCA Rights"
+            Write-Host "    [+] Providing $($VulnUser.SamAccountName) with ManageCA Rights" -ForegroundColor Yellow
         }
         Else {
-            Write-Verbose "Providing $($VulnUser.SamAccountName) with Issue and Manage Certificate Rights"
+            Write-Host "    [+] Providing $($VulnUser.SamAccountName) with Issue and Manage Certificate Rights" -ForegroundColor Yellow
         }
 
         # Get the CA Objects to modify

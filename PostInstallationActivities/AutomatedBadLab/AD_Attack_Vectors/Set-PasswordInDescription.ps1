@@ -18,7 +18,7 @@ Function Set-PasswordInDescription {
         # Write it in their description field in plain text
         Get-ADUser $User | Set-ADUser -Description "Just so I dont forget my password is: $Password"
 
-        Write-Verbose "$User has the password '$Password' in their description field"   
+        Write-Host "    [+] $User has the password '$Password' in their description field" -ForegroundColor Yellow
     }
 
     # Pass back the vulnerable users to the main script

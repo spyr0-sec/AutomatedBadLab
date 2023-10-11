@@ -16,7 +16,7 @@ Function New-ASREPUser {
             
         Try { 
             $BLUser | Set-ADAccountControl -DoesNotRequirePreAuth:$True
-            Write-Verbose "$($BLUser.SamAccountName) is ASREP roastable"
+            Write-Host "    [+] $($BLUser.SamAccountName) is ASREP roastable" -ForegroundColor Yellow
             $ASREPUsers += "$($BLUser.SamAccountName)"
         }
         Catch { 

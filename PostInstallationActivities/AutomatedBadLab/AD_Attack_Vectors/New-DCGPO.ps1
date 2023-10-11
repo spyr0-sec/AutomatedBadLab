@@ -29,6 +29,6 @@ Function New-DCGPO {
     # Force an immediate group policy update to apply
     Invoke-GPUpdate -RandomDelayInMinutes 0 
 
-    Write-Verbose "$GPOUser has full control over Domain Controllers GPO"
+    Write-Host "    [+] $GPOUser has full control over Domain Controllers GPO" -ForegroundColor Yellow
 
 }

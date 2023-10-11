@@ -21,5 +21,5 @@ Function New-DCSyncUser {
         Set-ExtendedRight $DCSyncUser $(Get-ADDomain) $DCRight
     }
 
-    Write-Verbose "$($DCSyncUser.SamAccountName) can now perform DCSync"
+    Write-Host "    [+] $($DCSyncUser.SamAccountName) can now perform DCSync" -ForegroundColor Yellow
 }

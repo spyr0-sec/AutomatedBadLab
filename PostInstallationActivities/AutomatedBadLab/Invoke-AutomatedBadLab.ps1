@@ -16,13 +16,13 @@ Set-WeakPasswordPolicy
 New-BLOUStructure
 
 # User Creation
-New-BLUser -UserCount $UserCount -Verbose -ErrorAction SilentlyContinue
+New-BLUser -UserCount $UserCount -ErrorAction SilentlyContinue
 
 # Group Creation
-New-BLGroup -GroupCount $GroupCount -Verbose -ErrorAction SilentlyContinue
+New-BLGroup -GroupCount $GroupCount -ErrorAction SilentlyContinue
 
 # Computer Creation
-New-BLComputer -ComputerCount $ComputerCount -Verbose -ErrorAction SilentlyContinue
+New-BLComputer -ComputerCount $ComputerCount -ErrorAction SilentlyContinue
 
 # Randomise Group Memberships
 Add-RandomObjectsToGroups 
@@ -41,10 +41,10 @@ $RoastableUsers = @()
 $VulnUsers = @()
 
 # ATTACK - Kerberoasting
-$RoastableUsers += New-KerberoastableUser -KerbUserCount $([math]::Ceiling($VulnerableCount / 2)) -Verbose
+$RoastableUsers += New-KerberoastableUser -KerbUserCount $([math]::Ceiling($VulnerableCount / 2)) 
 
 # ATTACK - ASREP roasting
-$RoastableUsers += New-ASREPUser -ASREPUserCount $([math]::Floor($VulnerableCount / 2)) -Verbose
+$RoastableUsers += New-ASREPUser -ASREPUserCount $([math]::Floor($VulnerableCount / 2)) 
 
 # Shuffle these up and split into two arrays to pass to the password functions
 $RoastableUsers = $RoastableUsers | Sort-Object { Get-Random }
@@ -53,13 +53,13 @@ $FirstHalf = $RoastableUsers[0..($halfCount-1)]
 $SecondHalf = $RoastableUsers[$halfCount..($RoastableUsers.Count-1)]
 
 # ATTACK - Brute force roastable users
-$VulnUsers += Set-WeakPassword -VulnUsers $FirstHalf -Verbose
+$VulnUsers += Set-WeakPassword -VulnUsers $FirstHalf 
 
 # ATTACK - Plaintext passwords in description field
-$VulnUsers += Set-PasswordInDescription -VulnUsers $SecondHalf -Verbose
+$VulnUsers += Set-PasswordInDescription -VulnUsers $SecondHalf 
 
 # ATTACK - Pre 2k Computer Account
-New-Pre2KComputerAccount -Verbose
+New-Pre2KComputerAccount 
 
 # ATTACK - Enable Anonymous LDAP Read Access
 Enable-AnonymousLDAP
@@ -68,43 +68,43 @@ Enable-AnonymousLDAP
 # Now employ multiple attack vectors on our vulnerable users
 
 # ATTACK - DNS Admin
-New-DNSAdmin -VulnUsers $VulnUsers -Verbose
+New-DNSAdmin -VulnUsers $VulnUsers 
 
 # ATTACK - Weak Kerberos Encryption
 Enable-AllKerbEncryptionTypes 
-New-DESKerberosUser -VulnUsers $VulnUsers -Verbose
+New-DESKerberosUser -VulnUsers $VulnUsers 
 
 # ATTACK - Reverable Password Encryption
-New-ReversablePasswordUser -VulnUsers $VulnUsers -Verbose
+New-ReversablePasswordUser -VulnUsers $VulnUsers 
 
 # ATTACK - Group Managed Service Accounts (gMSA)
-New-gMSA -VulnUsers $VulnUsers -Verbose
+New-gMSA -VulnUsers $VulnUsers 
 
 # ATTACK - Group Policy Passwords
-Set-AdministratorPassword -Verbose
+Set-AdministratorPassword 
 
 # ATTACK - DACL Attacks
-New-DACLAttacks -VulnUsers $VulnUsers -Verbose
+New-DACLAttacks -VulnUsers $VulnUsers 
 
 # ATTACK - Owner Attacks
-New-Owner -VulnUsers $VulnUsers -Verbose
+New-Owner -VulnUsers $VulnUsers 
 
 # ATTACK - DCSync Attack
-New-DCSyncUser -VulnUsers $VulnUsers -Verbose
+New-DCSyncUser -VulnUsers $VulnUsers 
 
 # ATTACK - Resource Based Constrained Delegation Attack
-New-RBCDUser -VulnUsers $VulnUsers -Verbose
+New-RBCDUser -VulnUsers $VulnUsers 
 
 # ATTACK - Domain Controller GPO Abuse
-New-DCGPO -VulnUsers $VulnUsers -Verbose
+New-DCGPO -VulnUsers $VulnUsers 
 
 # ATTACK - LAPS. Verbose messages are in the function
 Install-LAPS -VulnUsers $VulnUsers
 
 # ATTACK - ESC vulnerabilities
 If (Get-ADObject -Filter { ObjectClass -eq 'certificationAuthority' } -SearchBase "CN=Certification Authorities,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)") {
-   Set-ESC5 -VulnUsers $VulnUsers -Verbose
-   Set-ESC7 -VulnUsers $VulnUsers -Verbose
+   Set-ESC5 -VulnUsers $VulnUsers 
+   Set-ESC7 -VulnUsers $VulnUsers 
 }
 
 # Machine Attack Vectors ------------------------------------------------------

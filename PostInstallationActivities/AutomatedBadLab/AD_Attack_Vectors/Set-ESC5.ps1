@@ -14,5 +14,5 @@ Function Set-ESC5 {
     $CAComputer = Get-ADComputer -Identity (Get-ADGroupMember -Identity "Cert Publishers" | Where-Object objectClass -EQ computer).name
 
     # Give GenericAll over the CA Computer Object
-    Set-RandomACL $CAUser $CAComputer 'GenericAll' -Verbose
+    Set-RandomACL $CAUser $CAComputer 'GenericAll'
 }

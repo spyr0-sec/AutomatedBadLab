@@ -51,7 +51,7 @@
         
         # Max AD Username length is 20, cut if longer 
         If ($UserName.length -gt 20) {
-            Write-Verbose "$UserName has account name > 20 characters. Shortening to $($UserName.Substring(0,20))"
+            Write-Host "    [+] $UserName has account name > 20 characters. Shortening to $($UserName.Substring(0,20))" -ForegroundColor Yellow
             $UserName = $UserName.substring(0,20)
         }
 

@@ -40,13 +40,13 @@ Function Install-LAPS {
 
     # Make the computer object subject to LAPS policies
     Move-ADObject -Identity $LAPSComputer.DistinguishedName -TargetPath $LapsOU
-    Write-Verbose "Moved $($LAPSComputer.DistinguishedName) into $($LapsOU.DistinguishedName)" -Verbose
+    Write-Host "    [+] Moved $($LAPSComputer.DistinguishedName) into $($LapsOU.DistinguishedName)" -ForegroundColor Yellow
 
     # Pick a random vulnerable user to give LAPS Extended Rights
     $VulnUser = $VulnUsers | Get-Random
     Set-LapsADReadPasswordPermission -Identity $LapsOU -AllowedPrincipals "$((Get-ADDomain).Forest)\$VulnUser"
 
-    Write-Verbose "Provided $VulnUser permission to read $($LAPSComputer.SamAccountName) LAPS password" -Verbose
+    Write-Host "    [+] Provided $VulnUser permission to read $($LAPSComputer.SamAccountName) LAPS password" -ForegroundColor Yellow
 
     # --------------------------------------------------------------------------------------------
     # Create the GPO with the LAPS Policy registry keys

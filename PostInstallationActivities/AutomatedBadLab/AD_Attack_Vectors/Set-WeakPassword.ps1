@@ -14,7 +14,7 @@ Function Set-WeakPassword {
     # For each user, set a weak password
     foreach ($User in $VulnUsers) {
         $RandomPassword = Get-Random $BadPasswords
-        Write-Verbose "Setting $RandomPassword as password for $User"
+        Write-Host "    [+] Setting $RandomPassword as password for $User" -ForegroundColor Yellow
         Get-ADUser $User | Set-ADAccountPassword -Reset -NewPassword (ConvertTo-SecureString $RandomPassword -AsPlainText -Force)
     }
 
