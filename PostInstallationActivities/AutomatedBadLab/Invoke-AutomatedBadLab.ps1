@@ -30,6 +30,9 @@ Write-Host "[+] TODO! Creating Random Permissions.." -ForegroundColor Green
 # Randomise Group Memberships
 Add-RandomObjectsToGroups 
 
+# Move DC back to the Domain Controllers OU
+Set-DCLocation
+
 # Start making the AD vulnerable and keep track of the vulnerable users
 Write-Host "[+] Automating ATTACK Vectors.." -ForegroundColor Green
 
@@ -95,6 +98,9 @@ New-DCSyncUser -VulnUsers $VulnUsers -Verbose
 # ATTACK - Resource Based Constrained Delegation Attack
 New-RBCDUser -VulnUsers $VulnUsers -Verbose
 
+# ATTACK - Domain Controller GPO Abuse
+New-DCGPO -VulnUsers $VulnUsers -Verbose
+
 # ATTACK - LAPS. Verbose messages are in the function
 Install-LAPS -VulnUsers $VulnUsers
 
@@ -114,6 +120,3 @@ Disable-SMBSigning
 
 # ATTACK - Enable SMB Reflection
 Enable-Reflection
-
-# Apply Changes
-Restart-Computer
