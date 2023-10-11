@@ -24,9 +24,6 @@ New-BLGroup -GroupCount $GroupCount -Verbose -ErrorAction SilentlyContinue
 # Computer Creation
 New-BLComputer -ComputerCount $ComputerCount -Verbose -ErrorAction SilentlyContinue
 
-# Randomise ACLs
-Write-Host "[+] TODO! Creating Random Permissions.." -ForegroundColor Green
-  
 # Randomise Group Memberships
 Add-RandomObjectsToGroups 
 
