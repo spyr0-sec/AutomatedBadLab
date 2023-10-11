@@ -1,6 +1,8 @@
 AutomatedBadLab
 ========
-This PostInstallationActivity is not designed to be a cyber range such as [GOAD](https://github.com/Orange-Cyberdefense/GOAD) but a user controlled vulnerable domain to practise TTPs on. However, the ATTACK vectors are provisioned in a way where the a handful of random AD users will be explotiable via a "Primary" method, then each of these accounts will have random subset of "Second" attack Vectors if you do want to use this as an environment to teach others. 
+This PostInstallationActivity is not designed to be a cyber range such as [GOAD](https://github.com/Orange-Cyberdefense/GOAD) but a user controlled vulnerable domain to practise TTPs on. However, the ATTACK vectors are provisioned in a way where a handful of random AD users will be explotiable via a "Primary" method, then each of these accounts will have random subset of "Second" ATTACK Vectors if you do want to use this as an environment to teach others. 
+
+As these are all split into individual PowerShell functions, AutomatedBadLab also offers a reference for each of these misconfigurations to gain a better understanding of why they introduce vulnerabilities to a domain.
 
 Out of the box this will provision (quanities configurable in Invoke-AutomatedBadLab.ps1):
 - 1000 AD Users
@@ -21,8 +23,8 @@ VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[msDS-Al
 ## Full list of supported ATTACK vectors
 - "Primary"
     - Anonymous LDAP
-    - Passwords in AD description fields
-    - Users with weak passwords
+    - Passwords in AD Description Fields
+    - Users with Weak Passwords
     - ASREProasting
     - Kerberoasting
     - Pre-2K Computer Objects
@@ -43,7 +45,9 @@ VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[msDS-Al
     - Constrained / Unconstrained Delegation Attacks
     - DNSAdmins (No longer exploitable)
     - Group Policy Passwords
-    - Users with reversable password encryption
+    - Users with Reversable Password Encryption
     - Local Administrator Password Solution (LAPS)
     - Group Managed Service Accounts (gMSAs)
+    - Group Policy Object (GPO) Abuse
+    - Protected Users Bypass
     - Active Directory Certificate Services (AD CS) ESC1-8 
