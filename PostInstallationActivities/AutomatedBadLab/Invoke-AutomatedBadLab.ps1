@@ -98,6 +98,9 @@ New-RBCDUser -VulnUsers $VulnUsers
 # ATTACK - Domain Controller GPO Abuse
 New-DCGPO -VulnUsers $VulnUsers 
 
+# ATTACK - Protected Users Bypass
+Enable-ProtectedAdmin
+
 # ATTACK - LAPS. Verbose messages are in the function
 Install-LAPS -VulnUsers $VulnUsers
 
