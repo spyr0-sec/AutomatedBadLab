@@ -7,6 +7,8 @@ Function New-AnonymousSMBShare {
         [Parameter(Mandatory = $True)][string]$SMBDesc
     )
 
+    Write-Verbose "  [+] Creating SMB Share $SMBName.." -Verbose
+
     # First check if the path exists
     If (!(Test-Path $SMBPath)) {
         New-Item -ItemType Directory -Path $SMBPath

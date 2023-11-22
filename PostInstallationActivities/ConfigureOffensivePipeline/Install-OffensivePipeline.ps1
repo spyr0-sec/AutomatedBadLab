@@ -11,7 +11,7 @@ Add-MpPreference -ExclusionExtension “bin”
 
 ## Setup pre-reqs
 Write-Host "[+] Installing .Net Framework 3.5" -ForegroundColor Green
-DISM /Online /Enable-Feature /FeatureName:NetFx3 /All
+Install-WindowsFeature -Name NET-Framework-Core
 
 Write-Host "[+] Installing Visual Studio 2022 Build Tools" -ForegroundColor Green
 Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vs_buildtools.exe' -OutFile "$TempDir\vs_buildtools.exe"
