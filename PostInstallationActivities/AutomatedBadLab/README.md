@@ -51,3 +51,4 @@ VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[msDS-Al
     - Group Policy Object (GPO) Abuse
     - Protected Users Bypass
     - Active Directory Certificate Services (AD CS) ESC1-8 
+    - PrintNightmare Vulnerabilities

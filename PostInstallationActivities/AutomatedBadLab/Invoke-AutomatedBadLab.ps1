@@ -110,6 +110,9 @@ If (Get-ADObject -Filter { ObjectClass -eq 'certificationAuthority' } -SearchBas
    Set-ESC7 -VulnUsers $VulnUsers 
 }
 
+# ATTACK - PrintNightmare Vulnerabilities
+Enable-PrintNightmare
+
 # Machine Attack Vectors ------------------------------------------------------
 
 # ATTACK - Enable NTLMv1
