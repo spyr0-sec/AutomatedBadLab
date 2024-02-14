@@ -62,7 +62,7 @@ Invoke-LabCommand -ActivityName "Configure DHCP" -ComputerName (Get-LabVM) -Scri
     param($ClassC, $Gateway, $DNSServer)
 
     Install-WindowsFeature -Name "DHCP" -IncludeManagementTools
-    Add-DhcpServerv4Scope -Name "External" -Description "Provide DHCP addresses to AutomatedLab Outbound Network" -StartRange "$($ClassC).100" -EndRange "$($ClassC).200" -SubnetMask 255.255.255.0
+    Add-DhcpServerv4Scope -Name "External" -Description "Provide DHCP addresses to Outbound Network" -StartRange "$($ClassC).100" -EndRange "$($ClassC).200" -SubnetMask 255.255.255.0
     Set-DhcpServerv4OptionValue -ScopeId "$($ClassC).0" -OptionId 3 -Value $Gateway # Router
     Set-DhcpServerv4OptionValue -ScopeId "$($ClassC).0" -OptionId 6 -Value $DNSServer -Force # DNS
     New-LocalGroup -Name "DHCP Administrators" -Description "Full control of the DHCP Server."
@@ -71,6 +71,21 @@ Invoke-LabCommand -ActivityName "Configure DHCP" -ComputerName (Get-LabVM) -Scri
 
 # Update Windows
 Invoke-LabCommand -ComputerName (Get-LabVM) -ActivityName UpdateWindows -FileName 'Update-Windows.ps1' -DependencyFolderPath $CustomScripts\UpdateWindows
+
+Write-ScreenInfo "Waiting for Windows Update to complete on $RouterName..."
+$RouterUptime = (Get-VM -Name $RouterName).Uptime
+
+do {
+    Write-Progress -Id 1 -Activity "Updating Windows" -Status "Waiting for Reboot" 
+    Start-Sleep -Seconds 60
+    $currentUptime = (Get-VM -Name $RouterName).Uptime
+
+# If current uptime is less than the initial uptime, the VM has restarted
+} while ($currentUptime -ge $RouterUptime)
+
+Write-Progress -Id 1 -Activity "Updating Windows" -Status "Completed" -PercentComplete 100 -Completed
+Write-ScreenInfo "Waiting five minutes after update to become active again before continuing"
+Start-Sleep -Seconds 300
 
 # Provides a pretty table detailing all elements of what has been created
 Show-LabDeploymentSummary -Detailed
