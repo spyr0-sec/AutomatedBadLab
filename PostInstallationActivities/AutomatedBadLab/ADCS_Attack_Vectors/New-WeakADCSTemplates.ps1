@@ -105,4 +105,46 @@ Function New-WeakADCSTemplates {
         Install-WindowsFeature -Name ADCS-Web-Enrollment
         Install-AdcsWebEnrollment -Force
     }
+
+    #--------------------------------------------------------------------------------------------------------------------
+    # ESC13 - OID Group Link
+    New-LabCATemplate -ApplicationPolicy 'Client Authentication' -TemplateName "ESC13" -DisplayName "ESC13" -SourceTemplateName "User" `
+                        -SamAccountName "Domain Users" -ComputerName $CertAuthority -Version 2
+    
+    Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Group Link OID to Users DN" -ScriptBlock {
+        $PKSContainer = "CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)"
+
+        # Create an empty universal AD group
+        New-ADGroup -Name "ESC13" -GroupScope Universal -Path "CN=Users,$((Get-ADRootDSE).defaultNamingContext)"
+        $UniversalGroup = Get-ADGroup -Identity "ESC13"       
+
+        # Vulnerable OID Attributes
+        $OIDName = "10330615.D778637A99097DF4BED6C54BF449A9E6"
+        $CertTemplateOID = "1.3.6.1.4.1.311.21.8.9522117.16246852.1590176.9773407.13761117.29.6161680.10330615"
+        $OIDAttributes = @{
+            Name = $OIDName
+            DisplayName = "ESC13"
+            'msPKI-Cert-Template-OID' = $CertTemplateOID
+            flags = 2
+            'msDS-OIDToGroupLink' = $UniversalGroup.DistinguishedName
+        }
+
+        # Create the OID
+        New-ADObject -Name $OIDName -Type msPKI-Enterprise-Oid -Path "CN=OID,$PKSContainer" -OtherAttributes $OIDAttributes
+
+        # Add Assurance Issuance Policy to Certificate Template
+        $ESC13CertTemplate = Get-ADObject "CN=ESC13,CN=Certificate Templates,$PKSContainer" -Properties *
+
+        Set-ADObject -Identity $ESC13CertTemplate.DistinguishedName -Replace @{
+            flags = 131642
+            'msPKI-Enrollment-Flag' = 32
+            'msPKI-Private-Key-Flag' = 16842752
+            'msPKI-RA-Signature' = 1
+        }
+
+        Set-ADObject -Identity $ESC13CertTemplate.DistinguishedName -Replace @{
+            'msPKI-Certificate-Policy' = $CertTemplateOID
+            'msPKI-RA-Policies' = $CertTemplateOID
+        }
+    }
 }
