@@ -2,7 +2,7 @@
 # Global parameters - CHANGEME
 $LabName         = 'StandaloneTemplate'
 $Subnet          = '10.10.X.0/24'
-$AdminUser       = 'domainadmin'
+$AdminUser       = 'wsadmin'
 $AdminPass       = 'complexpassword'
 $MachineName     = 'WS01'
 
