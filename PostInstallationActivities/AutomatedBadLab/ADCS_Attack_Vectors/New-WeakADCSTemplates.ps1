@@ -146,5 +146,21 @@ Function New-WeakADCSTemplates {
             'msPKI-Certificate-Policy' = $CertTemplateOID
             'msPKI-RA-Policies' = $CertTemplateOID
         }
+
+        # Provide DCSync rights to the group to make it exploitable
+        $Domain = [ADSI]"LDAP://$(Get-ADDomain)"
+
+        # Define the rights
+        $DCSyncMap = @{
+            "DS-Replication-Get-Changes" = "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2"
+            "DS-Replication-Get-Changes-All" = "1131f6ad-9c07-11d1-f79f-00c04fc2dcd2"
+        }
+
+        # Apply the DCSync ACEs and commit the changes
+        foreach ($DCRight in $DCSyncMap.GetEnumerator()) { 
+            $ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule ($UniversalGroup.SID, "ExtendedRight", "Allow", [System.Guid]::Parse($DCRight.Value))
+            $Domain.ObjectSecurity.AddAccessRule($ace)
+            $Domain.CommitChanges()
+        }
     }
 }
