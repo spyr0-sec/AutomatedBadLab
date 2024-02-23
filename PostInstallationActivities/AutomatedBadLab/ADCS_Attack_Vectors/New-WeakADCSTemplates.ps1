@@ -30,6 +30,9 @@ Function New-WeakADCSTemplates {
     # Get our Certificate Authority to install our Templates on
     $CertAuthority = (Get-LabVM -Role CaRoot)
 
+    # Get our Domain Controller to configure registry settings
+    $DomainController = (Get-LabVM -Role RootDC)
+
     #--------------------------------------------------------------------------------------------------------------------
     # ESC1 - Combination of vulns (1) & (2) & (3) & (4) & (5) & (6)
     New-LabCATemplate -ApplicationPolicy 'Client Authentication' -TemplateName "ESC1" -DisplayName "ESC1" -SourceTemplateName "User" `
@@ -105,6 +108,37 @@ Function New-WeakADCSTemplates {
         Install-WindowsFeature -Name ADCS-Web-Enrollment
         Install-AdcsWebEnrollment -Force
     }
+
+    #--------------------------------------------------------------------------------------------------------------------
+    # https://research.ifcr.dk/certipy-4-0-esc9-esc10-bloodhound-gui-new-authentication-and-request-methods-and-more-7237d88061f7
+    # ESC9 / 10a - StrongCertificateBinding
+    Invoke-LabCommand -ComputerName $DomainController -ActivityName "Disable StrongCertificateBinding" -ScriptBlock {
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Kdc" -Name "StrongCertificateBinding" -Value 0 -Type DWord
+    }
+
+    New-LabCATemplate -ApplicationPolicy 'Client Authentication' -TemplateName "ESC9" -DisplayName "ESC9" -SourceTemplateName "User" `
+                        -SamAccountName "Domain Users" -EnrollmentFlags IncludeSymmetricAlgorithms -ComputerName $CertAuthority -Version 2
+
+    # New-LabCATemplate doesn't support CT_FLAG_NO_SECURITY_EXTENSION so need to patch msPKI-Enrollment-Flag manually
+    Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Add CT_FLAG_NO_SECURITY_EXTENSION to ESC9 Template" -ScriptBlock {
+        $PKSContainer = "CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)"
+
+        # Add CT_FLAG_NO_SECURITY_EXTENSION flag to Certificate Template
+        $ESC9CertTemplate = Get-ADObject "CN=ESC9,CN=Certificate Templates,$PKSContainer" -Properties msPKI-Enrollment-Flag
+
+        Set-ADObject -Identity $ESC9CertTemplate.DistinguishedName -Replace @{
+            'msPKI-Enrollment-Flag' = 0x00080000
+        }
+    }
+
+    #--------------------------------------------------------------------------------------------------------------------
+    # ESC10b - CertificateMappingMethods
+    New-LabCATemplate -ApplicationPolicy 'Client Authentication' -TemplateName "ESC10b" -DisplayName "ESC10b" -SourceTemplateName "User" `
+                        -SamAccountName "Domain Users" -ComputerName $CertAuthority -Version 2
+    
+    Invoke-LabCommand -ComputerName $DomainController -ActivityName "Introduce Weak CertificateMappingMethods" -ScriptBlock {
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Schannel" -Name "CertificateMappingMethods" -Value 0x0004 -Type DWord
+    }                  
 
     #--------------------------------------------------------------------------------------------------------------------
     # ESC13 - OID Group Link
