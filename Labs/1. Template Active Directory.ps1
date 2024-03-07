@@ -12,6 +12,12 @@ $DCIP           = '10.10.X.10'
 # Path to our custom provisioning scripts
 $CustomScripts  = 'C:\AutomatedBadLab\PostInstallationActivities'
 
+# Port forward RDP access to the lab machine to make it accessible externally
+#$LPORT = "3490"
+#$RHOST = "10.10.X.3"
+
+#netsh interface portproxy add v4tov4 listenport=$LPORT listenaddress=0.0.0.0 connectport=3389 connectaddress=$RHOST
+
 #--------------------------------------------------------------------------------------------------------------------
 # LAB CREATION
 # Create our lab using HyperV (Azure is also supported)
