@@ -16,20 +16,13 @@ if (-not $lab)
 # Specify locations
 $VS2022FilePath = "$labSources\SoftwarePackages\vs2022_community.exe"
 
-# Download bootstrapper to local machine
 # https://learn.microsoft.com/en-gb/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2022
-$VS2022URL = 'https://aka.ms/vs/17/release/vs_community.exe'
-
-Get-LabInternetFile -Uri $VS2022URL -Path $VS2022FilePath 
-
 if (-not (Test-Path -Path $VS2022FilePath))
 {
-    Write-Error "$VS2022FilePath could not be found. Download from $VS2022URL"
-    return
+    # Download bootstrapper to local machine
+    $VS2022URL = 'https://aka.ms/vs/17/release/vs_community.exe'
+    Get-LabInternetFile -Uri $VS2022URL -Path $VS2022FilePath 
 }
-
-Write-ScreenInfo -Message 'Waiting for machines to startup' -NoNewline
-Start-LabVM -ComputerName $ComputerName -Wait -ProgressIndicator 15
 
 # Upload executable to machine
 Copy-LabFileItem -Path $VS2022FilePath -ComputerName $ComputerName -DestinationFolderPath 'C:\VisualStudio2022'
