@@ -1,7 +1,6 @@
 #--------------------------------------------------------------------------------------------------------------------
 # Global parameters - CHANGEME
 $LabName         = 'WDACTemplate'
-$Subnet          = '10.10.X.0/24'
 $AdminUser       = 'wsadmin'
 $AdminPass       = 'complexpassword'
 $MachineName     = 'WDAC01'
@@ -14,12 +13,6 @@ $OperatingSystem = 'Windows 11 Enterprise Evaluation'
 [string]$WDACAction = "Allow"
 [bool]$WDACDCS = $True # True, False
 
-# Port forward RDP access to the lab machine to make it accessible externally
-#$LPORT = "3490"
-#$RHOST = "10.10.X.3"
-
-#netsh interface portproxy add v4tov4 listenport=$LPORT listenaddress=0.0.0.0 connectport=3389 connectaddress=$RHOST
-
 #--------------------------------------------------------------------------------------------------------------------
 # CUSTOMROLE INSTLLATION
 $ALCustomRolesFilePath = $labSources + '\CustomRoles'
@@ -31,10 +24,6 @@ Copy-Item -Path "C:\AutomatedBadLab\CustomRoles\*" -Destination $ALCustomRolesFi
 # LAB CREATION
 # Create our lab using HyperV (Azure is also supported)
 New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
-
-# For Internal networks, just need a name and subnet space. Internet Network is a static NAT network
-Add-LabVirtualNetworkDefinition -Name $labName -AddressSpace $Subnet
-Add-LabVirtualNetworkDefinition -Name 'Internet' -AddressSpace 10.10.0.0/24 # REMOVE IF INTERNAL ONLY
 
 # Create a domain admin account to handle Windows machine creation / Active Directory configration. 
 Set-LabInstallationCredential -Username $AdminUser -Password $AdminPass
@@ -53,9 +42,11 @@ $PSDefaultParameterValues = @{
 #--------------------------------------------------------------------------------------------------------------------
 # NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
 # Give Workstation Internet access via NAT switch
-$WS1NICs = @()
-$WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp # REMOVE IF INTERNAL ONLY
+$VSwitch = Get-VMSwitch | Where-Object SwitchType -eq 'External'
+Add-LabVirtualNetworkDefinition -Name $VSwitch.Name -HyperVProperties @{
+    SwitchType = $VSwitch.SwitchType
+    AdapterName = $VSwitch.NetAdapterInterfaceDescription
+}
 
 #--------------------------------------------------------------------------------------------------------------------
 # MACHINE CREATION - https://automatedlab.org/en/latest/Wiki/Basic/addmachines/
@@ -66,7 +57,7 @@ $WDACRole = Get-LabPostInstallationActivity -CustomRole WindowsDefenderApplicati
     DCS = $WDACDCS
 }
 
-Add-LabMachineDefinition -Name $MachineName -NetworkAdapter $WS1NICs -PostInstallationActivity $WDACRole
+Add-LabMachineDefinition -Name $MachineName -Network $VSwitch.Name -PostInstallationActivity $WDACRole
 
 # Install our lab, has flags for level of output
 Install-Lab # -Verbose -Debug
