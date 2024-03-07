@@ -9,6 +9,13 @@ $MachineName     = 'DevBox'
 $OperatingSystem = 'Windows 11 Enterprise Evaluation'
 
 #--------------------------------------------------------------------------------------------------------------------
+# CUSTOMROLE INSTLLATION
+$ALCustomRolesFilePath = $labSources + '\CustomRoles'
+
+# Copy the subdirectories of CustomRoles to the lab sources
+Copy-Item -Path "C:\AutomatedBadLab\CustomRoles\*" -Destination $ALCustomRolesFilePath -Recurse -ErrorAction SilentlyContinue
+
+#--------------------------------------------------------------------------------------------------------------------
 # LAB CREATION
 # Create our lab using HyperV (Azure is also supported)
 New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
