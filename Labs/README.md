@@ -18,6 +18,10 @@ All templates are headered with a section of common parameters to change. The on
     - Windows Server with DHCP Role
     - Configures NAT on your local machine to provide external routing to other Lab machines 
 - Standalone (~10 minutes build time)
-    - Creates a single box of your choosing
+    - Creates a single internet-connected box
+- WDAC (~10 minutes build time)
+    - Example of Custom Roles which install a user defined WDAC policy
+- DevBox (~30 minutes build time)
+    - Machine pre-installed with Visual Studio + VS Code for development
 
 As this is pure Powershell, this should (hopefully) provide consistent and repeatable environments. However AutomatedLab does come with [checkpoint](https://automatedlab.org/en/latest/AutomatedLab/en-us/Checkpoint-LabVM/) functionality that is useful rather than recreating the whole environment. 
