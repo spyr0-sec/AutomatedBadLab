@@ -31,7 +31,7 @@ Function New-WeakADCSTemplates {
     $CertAuthority = (Get-LabVM -Role CaRoot)
 
     # Get our Domain Controller to configure registry settings
-    $DomainController = (Get-LabVM -Role RootDC)
+    $DomainController = (Get-LabVM -Role RootDC | Where-Object { $_.DomainName -eq $CertAuthority.DomainName })
 
     #--------------------------------------------------------------------------------------------------------------------
     # ESC1 - Combination of vulns (1) & (2) & (3) & (4) & (5) & (6)
