@@ -70,4 +70,4 @@ Function New-BLComputer {
     }
 }
 
-Write-Progress -Id 1 -Activity "Created AD Computers" -Completed
+Write-Progress -Id 1 -Activity "Created AD Computers" -Status "Completed" -PercentComplete 100 -Completed

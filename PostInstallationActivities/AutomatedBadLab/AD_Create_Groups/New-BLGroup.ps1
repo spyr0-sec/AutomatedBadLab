@@ -47,4 +47,4 @@ Function New-BLGroup {
     } 
 }
 
-Write-Progress -Id 1 -Activity "Created AD Groups" -Completed
+Write-Progress -Id 1 -Activity "Created AD Groups" -Status "Completed" -PercentComplete 100 -Completed

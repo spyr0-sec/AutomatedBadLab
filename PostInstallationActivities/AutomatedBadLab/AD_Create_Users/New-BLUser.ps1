@@ -65,4 +65,4 @@
     }
 }
 
-Write-Progress -Id 1 -Activity "Created AD Users" -Completed
+Write-Progress -Id 1 -Activity "Created AD Users" -Status "Completed" -PercentComplete 100 -Completed
