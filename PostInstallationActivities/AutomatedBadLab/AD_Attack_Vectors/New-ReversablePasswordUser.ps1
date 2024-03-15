@@ -2,13 +2,13 @@
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Force reversable password encryption on a vulnerable user" -ForegroundColor Green
 
     # Force DES Kerberos encryption for a weak user
     $RevEncUser = $VulnUsers | Get-Random
-    Get-ADUser $RevEncUser | Set-ADAccountControl -AllowReversiblePasswordEncryption $True
-    Write-Host "    [+] Configured $RevEncUser to use reversable password encryption" -ForegroundColor Yellow
+    Set-ADAccountControl -Identity $RevEncUser -AllowReversiblePasswordEncryption $True
+    Write-Host "    [+] $RevEncUser configured to use reversable password encryption" -ForegroundColor Yellow
 }

@@ -10,10 +10,12 @@
     $Name = "$($Prefixes | Get-Random)-$([guid]::NewGuid().ToString().Substring(0, 8).ToUpper())"
 
     # Create the computer object using net computer which wil create it as a pre-2K object
-    net computer "\\$Name" /add 
+    net computer "\\$Name" /add
 
-    # Create the computer object with random attributes
-    Get-ADComputer $Name | Set-ADComputer `
+    $Pre2KComputer = Get-ADComputer $Name
+
+    # Populate the computer object with random attributes
+    $Pre2KComputer | Set-ADComputer `
         -SAMAccountName $Name `
         -DNSHostName "$Name.$((Get-AdDomain).Forest)" `
         -Enabled $True `
@@ -25,7 +27,7 @@
         -OperatingSystemServicePack "Service Pack $(Get-Random -Minimum 0 -Maximum 3)"
 
     # Doesn't seem to create it with the PASSWD_NOTREQD flag set so set it manually
-    Get-ADComputer $Name | Set-ADAccountControl -PasswordNotRequired $True
+    $Pre2KComputer | Set-ADAccountControl -PasswordNotRequired $True
 
-    Write-Host "    [+] $Name computer created with the password $($Name.ToLower())" -ForegroundColor Yellow
+    Write-Host "    [+] $Pre2KComputer computer created with the password '$($Name.ToLower())'" -ForegroundColor Yellow
 }

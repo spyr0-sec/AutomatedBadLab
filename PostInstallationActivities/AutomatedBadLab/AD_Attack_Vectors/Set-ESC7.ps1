@@ -2,7 +2,7 @@ Function Set-ESC7 {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Providing a vulnerable user danagerous rights over the CA Object (ESC7)" -ForegroundColor Green
@@ -14,16 +14,6 @@ Function Set-ESC7 {
     $AccessMask = 1
     
     Foreach ($VulnUser in $SelectedVulnUsers) {
-
-        # Get the ADUser Object
-        $VulnUser = Get-ADUser -Identity $VulnUser
-
-        If ($AccessMask -eq 1) {
-            Write-Host "    [+] Providing $($VulnUser.SamAccountName) with ManageCA Rights" -ForegroundColor Yellow
-        }
-        Else {
-            Write-Host "    [+] Providing $($VulnUser.SamAccountName) with Issue and Manage Certificate Rights" -ForegroundColor Yellow
-        }
 
         # Get the CA Objects to modify
         $CAComputer = Get-ADComputer -Identity (Get-ADGroupMember -Identity "Cert Publishers" | Where-Object objectClass -EQ computer).name
@@ -60,6 +50,13 @@ Function Set-ESC7 {
                 Restart-Service -Name 'Certsvc'
 
             } -ArgumentList $VulnUser, $AccessMask, $RegPath
+        }
+
+        If ($AccessMask -eq 1) {
+            Write-Host "    [+] $VulnUser has ManageCA Rights on $CAComputer" -ForegroundColor Yellow
+        }
+        Else {
+            Write-Host "    [+] $VulnUser has Issue and Manage Certificate Rights on $CAComputer" -ForegroundColor Yellow
         }
 
         # Give second user ManageCertificate Rights

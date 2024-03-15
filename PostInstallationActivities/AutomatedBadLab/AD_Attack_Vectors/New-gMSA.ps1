@@ -3,7 +3,7 @@ Function New-gMSA {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Provide a vulnerable user privileges to a gMSA account" -ForegroundColor Green
@@ -14,7 +14,7 @@ Function New-gMSA {
     $Name = "SPFarm$(Get-Random -Minimum 1 -Maximum 9)"
  
     # Create the KDS Root Key 
-    Add-KdsRootKey –EffectiveTime ((get-date).addhours(-10))
+    Add-KdsRootKey –EffectiveTime ((Get-Date).addhours(-10))
 
     # Create the gMSA
     New-ADServiceAccount $Name `

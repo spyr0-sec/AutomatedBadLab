@@ -2,13 +2,13 @@
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Force DES Kerberos encryption on a vulnerable user" -ForegroundColor Green
 
     # Force DES Kerberos encryption for a weak user
     $DESUser = $VulnUsers | Get-Random
-    Get-ADUser $DESUser | Set-ADAccountControl -UseDESKeyOnly $True
-    Write-Host "    [+] Configured $DESUser to use DES Kerberos encryption" -ForegroundColor Yellow
+    Set-ADAccountControl -Identity $DESUser -UseDESKeyOnly $True
+    Write-Host "    [+] $DESUser configured to use DES Kerberos encryption" -ForegroundColor Yellow
 }

@@ -2,13 +2,13 @@ Function New-DCSyncUser {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Providing a vulnerable user Replication Extended Rights to perform a DCSync" -ForegroundColor Green
 
     # Provide a vulnerable user Replication Extended Rights
-    $DCSyncUser = Get-ADUser -Identity ($VulnUsers | Get-Random)
+    $DCSyncUser = $VulnUsers | Get-Random
 
     # Define the rights
     $DCSyncMap = @{
@@ -20,6 +20,4 @@ Function New-DCSyncUser {
     foreach ($DCRight in $DCSyncMap.GetEnumerator()) {
         Set-ExtendedRight $DCSyncUser $(Get-ADDomain) $DCRight
     }
-
-    Write-Host "    [+] $($DCSyncUser.SamAccountName) can now perform DCSync" -ForegroundColor Yellow
 }

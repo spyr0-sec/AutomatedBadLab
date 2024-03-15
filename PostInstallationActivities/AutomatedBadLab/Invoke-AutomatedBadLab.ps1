@@ -36,7 +36,7 @@ Write-Host "[+] Automating ATTACK Vectors.." -ForegroundColor Green
 # Primary Attack Vectors ------------------------------------------------------
 # Make random number of users roastable, then provide them with passwords which are either weak or in the user description field
 
-# These arrays contain samAccountNames, ADUsers will be resolved in the functions
+# Arrays to house the ADUser objects
 $RoastableUsers = @()
 $VulnUsers = @()
 
@@ -101,8 +101,10 @@ New-DCGPO -VulnUsers $VulnUsers
 # ATTACK - Protected Users Bypass
 Enable-ProtectedAdmin
 
-# ATTACK - LAPS. Verbose messages are in the function
-Install-LAPS -VulnUsers $VulnUsers
+# ATTACK - LAPS (available on OS > April 2023). Verbose messages are in the function
+If (Get-Command Update-LapsADSchema -ErrorAction SilentlyContinue) {
+   Install-LAPS -VulnUsers $VulnUsers
+}
 
 # ATTACK - ESC vulnerabilities
 If (Get-ADObject -Filter { ObjectClass -eq 'certificationAuthority' } -SearchBase "CN=Certification Authorities,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)") {
@@ -123,3 +125,6 @@ Disable-SMBSigning
 
 # ATTACK - Enable SMB Reflection
 Enable-Reflection
+
+# Return vulnerable users for cross domain membership attacks
+return $VulnUsers

@@ -1,9 +1,8 @@
-
 Function New-DCGPO {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Providing a vulnerable user rights over Domain Controllers linked GPO" -ForegroundColor Green
@@ -24,11 +23,10 @@ Function New-DCGPO {
     New-GPLink -Name $GPODisplayName -Target $DCContainer -Enforced Yes
 
     # Provide vulnerable user with full control over the GPO to abuse
-    Set-GPPermissions -Name $GPODisplayName -TargetName $GPOUser -TargetType User -PermissionLevel GpoEditDeleteModifySecurity
+    Set-GPPermission -Name $GPODisplayName -TargetName $GPOUser.SamAccountName -TargetType User -PermissionLevel GpoEditDeleteModifySecurity
 
     # Force an immediate group policy update to apply
     Invoke-GPUpdate -RandomDelayInMinutes 0 
 
     Write-Host "    [+] $GPOUser has full control over Domain Controllers GPO" -ForegroundColor Yellow
-
 }

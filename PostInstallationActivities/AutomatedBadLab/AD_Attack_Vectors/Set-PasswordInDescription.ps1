@@ -2,7 +2,7 @@ Function Set-PasswordInDescription {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Putting roastable users password in their description field" -ForegroundColor Green
@@ -13,10 +13,10 @@ Function Set-PasswordInDescription {
         $Password = New-Password
 
         # Reset their password to new value
-        Get-ADUser $User | Set-ADAccountPassword -Reset -NewPassword (ConvertTo-SecureString $Password -AsPlainText -Force)
+        Set-ADAccountPassword -Identity $User -Reset -NewPassword (ConvertTo-SecureString $Password -AsPlainText -Force)
 
         # Write it in their description field in plain text
-        Get-ADUser $User | Set-ADUser -Description "Just so I dont forget my password is: $Password"
+        Set-ADUser -Identity $User -Description "Just so I dont forget my password is: $Password"
 
         Write-Host "    [+] $User has the password '$Password' in their description field" -ForegroundColor Yellow
     }

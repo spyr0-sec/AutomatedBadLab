@@ -9,15 +9,15 @@ Function New-ASREPUser {
 
     Write-Host "  [+] Configuring No Pre-authentication for $ASREPUserCount Users" -ForegroundColor Green
 
-    $ASREPUsers = @()
+    $ASREPUsers = New-Object 'System.Collections.Generic.List[Microsoft.ActiveDirectory.Management.ADUser]'
     
     for ($Counter = 1; $Counter -le $ASREPUserCount; $Counter++) {
         $BLUser = Get-ADUser -Filter {Description -like "*AutomatedBadLab*" -and DoesNotRequirePreAuth -eq "False"} -Property DoesNotRequirePreAuth | Get-Random
             
         Try { 
             $BLUser | Set-ADAccountControl -DoesNotRequirePreAuth:$True
-            Write-Host "    [+] $($BLUser.SamAccountName) is ASREP roastable" -ForegroundColor Yellow
-            $ASREPUsers += "$($BLUser.SamAccountName)"
+            Write-Host "    [+] $BLUser is ASREP roastable" -ForegroundColor Yellow
+            $ASREPUsers += $BLUser
         }
         Catch { 
             # Error, try again with a different user

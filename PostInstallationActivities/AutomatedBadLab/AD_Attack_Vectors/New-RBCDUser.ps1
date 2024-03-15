@@ -2,13 +2,13 @@ Function New-RBCDUser {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Providing a vulnerable user ability to perform RBCD attacks on a user and computer object" -ForegroundColor Green
 
     # Get random vulnerable user
-    $VulnUser = Get-ADUser -Identity ($VulnUsers | Get-Random)
+    $VulnUser = $VulnUsers | Get-Random
 
     # Get the GUID for the msDS-AllowedToActOnBehalfOfOtherIdentity extended right
     $ACLMap = @{
@@ -26,5 +26,4 @@ Function New-RBCDUser {
 
     # Then provide the User with the ability to perform Resource Based Constrained Delegation on a user object
     Set-ExtendedRight $VulnUser $RBCDVictimUser ($ACLMap.GetEnumerator() | Get-Random)
-
 }

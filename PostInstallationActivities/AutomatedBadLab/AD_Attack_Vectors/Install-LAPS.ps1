@@ -4,7 +4,7 @@ Function Install-LAPS {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Installing LAPS" -ForegroundColor Green
@@ -39,14 +39,14 @@ Function Install-LAPS {
     Set-LapsADComputerSelfPermission -Identity $LapsOU
 
     # Make the computer object subject to LAPS policies
-    Move-ADObject -Identity $LAPSComputer.DistinguishedName -TargetPath $LapsOU
-    Write-Host "    [+] Moved $($LAPSComputer.DistinguishedName) into $($LapsOU.DistinguishedName)" -ForegroundColor Yellow
+    Move-ADObject -Identity $LAPSComputer -TargetPath $LapsOU
+    Write-Host "    [+] $LAPSComputer moved into $LapsOU" -ForegroundColor Yellow
 
     # Pick a random vulnerable user to give LAPS Extended Rights
     $VulnUser = $VulnUsers | Get-Random
-    Set-LapsADReadPasswordPermission -Identity $LapsOU -AllowedPrincipals "$((Get-ADDomain).Forest)\$VulnUser"
+    Set-LapsADReadPasswordPermission -Identity $LapsOU -AllowedPrincipals "$((Get-ADDomain).Forest)\$($VulnUser.SamAccountName)"
 
-    Write-Host "    [+] Provided $VulnUser permission to read $($LAPSComputer.SamAccountName) LAPS password" -ForegroundColor Yellow
+    Write-Host "    [+] $VulnUser can read $LAPSComputer LAPS password" -ForegroundColor Yellow
 
     # --------------------------------------------------------------------------------------------
     # Create the GPO with the LAPS Policy registry keys
@@ -61,7 +61,7 @@ Function Install-LAPS {
         "PasswordComplexity" = 4
         "PasswordExpirationProtectionEnabled" = 1
         "ADPasswordEncryptionEnabled" = 1
-        "ADPasswordEncryptionPrincipal" = "$((Get-ADDomain).Forest)\$VulnUser"
+        "ADPasswordEncryptionPrincipal" = "$((Get-ADDomain).Forest)\$($VulnUser.SamAccountName)"
         "ADEncryptedPasswordHistorySize" = 12
         "ADBackupDSRMPassword" = 1
         "PostAuthenticationResetDelay" = 12
@@ -83,7 +83,7 @@ Function Install-LAPS {
     Invoke-GPUpdate -Computer $LAPSComputer.DNSHostName -RandomDelayInMinutes 0 -Force -Target Computer
 
     # Configure Auditing to see what this looks like when abused
-    Set-LapsADAuditing -Identity $LapsOU -AuditedPrincipals "$((Get-ADDomain).Forest)\$VulnUser" -AuditType Success,Failure
+    Set-LapsADAuditing -Identity $LapsOU -AuditedPrincipals "$((Get-ADDomain).Forest)\$($VulnUser.SamAccountName)" -AuditType Success,Failure
 
     # Invoke LAPS Policy Processing after our changes
     Invoke-LapsPolicyProcessing

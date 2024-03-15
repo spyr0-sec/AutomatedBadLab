@@ -9,7 +9,7 @@
 
     Write-Host "  [+] Configuring $KerbUserCount Users to be Kerberoastable" -ForegroundColor Green
     
-    $KerbUsers = @()
+    $KerbUsers = New-Object 'System.Collections.Generic.List[Microsoft.ActiveDirectory.Management.ADUser]'
     $ServiceClass = @("HTTP", "HOST", "TERMSRV", "MSSQLSvc", "CIFS", "POP3")
         
     for ($Counter = 1; $Counter -le $KerbUserCount; $Counter++) {
@@ -17,11 +17,11 @@
         $BLUser = Get-ADUser -Filter {Description -like "*AutomatedBadLab*" -and ServicePrincipalNames -notlike "*"} -Property ServicePrincipalNames | Get-Random
         $SPN = "$($ServiceClass | Get-Random)/$BLComputer"
 
-        Write-Host "    [+] Setting SPN '$SPN' for $($BLUser.SamAccountName)" -ForegroundColor Yellow
+        Write-Host "    [+] $BLUser is Kerberostable with SPN: '$SPN'" -ForegroundColor Yellow
             
         Try { 
             $BLUser | Set-ADUser -ServicePrincipalNames @{Add = $SPN } -ErrorAction Stop
-            $KerbUsers += "$($BLUser.SamAccountName)"
+            $KerbUsers += $BLUser
         }
         Catch { 
             # Error, try again with a different user
@@ -32,4 +32,3 @@
     # Return the number of users that were made Kerberoastable
     return $KerbUsers
 }
-    

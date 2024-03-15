@@ -4,7 +4,7 @@ Function Set-WeakPassword {
     # Ensure the misconfigured users have a weak password
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][string[]]$VulnUsers
+        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
     )
 
     Write-Host "  [+] Configuring Weak Passwords for roastable Users" -ForegroundColor Green
@@ -14,8 +14,8 @@ Function Set-WeakPassword {
     # For each user, set a weak password
     foreach ($User in $VulnUsers) {
         $RandomPassword = Get-Random $BadPasswords
-        Write-Host "    [+] Setting $RandomPassword as password for $User" -ForegroundColor Yellow
-        Get-ADUser $User | Set-ADAccountPassword -Reset -NewPassword (ConvertTo-SecureString $RandomPassword -AsPlainText -Force)
+        Write-Host "    [+] $User has password '$RandomPassword'" -ForegroundColor Yellow
+        Set-ADAccountPassword -Identity $User -Reset -NewPassword (ConvertTo-SecureString $RandomPassword -AsPlainText -Force)
     }
 
     # Pass back the vulnerable users to the main script

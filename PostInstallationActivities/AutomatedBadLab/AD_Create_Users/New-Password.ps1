@@ -1,4 +1,4 @@
-function New-Password {
+Function New-Password {
     param (
         [int]$length = 22
     )

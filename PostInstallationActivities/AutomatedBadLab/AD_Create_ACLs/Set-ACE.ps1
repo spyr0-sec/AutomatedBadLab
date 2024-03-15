@@ -1,8 +1,7 @@
 Function Set-ACE($VulnUser, $VictimUser, $Right, $GuidValue = $null) {
     
     # Bind to the victim
-    $VictimDN = ($VictimUser).DistinguishedName
-    $Victim = [ADSI]"LDAP://$VictimDN"
+    $Victim = [ADSI]"LDAP://$VictimUser"
 
     # Create a new ACE
     if ($GuidValue) {
