@@ -30,15 +30,12 @@ Function New-BLGroup {
             Break
         }
 
-        $AdminGroups = @("IT Support", "HR Staff", "Operations Team", "Development Squad", "Legal Department", "System Administration", "Engineering Group", "Compliance Department", "IT Security", "Technical Support")
+        $GroupScope = 'DomainLocal', 'Global', 'Universal' | Get-Random
+        $GroupCategory = 'Security', 'Distribution' | Get-Random
 
-        If ($GroupName -contains $adminGroups) {
+        # Provide groups that permit foreign memberships
+        If ($GroupScope -eq 'DomainLocal') {
             $GroupCategory = 'Security'
-            $GroupScope = 'Global'
-        }
-        Else {
-            $GroupCategory = 'Distribution'
-            $GroupScope = 'Universal', 'DomainLocal' | Get-Random
         }
 
         # Create the group
