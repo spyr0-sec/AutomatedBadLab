@@ -107,9 +107,12 @@ If (Get-Command Update-LapsADSchema -ErrorAction SilentlyContinue) {
 }
 
 # ATTACK - ESC vulnerabilities
-If (Get-ADObject -Filter { ObjectClass -eq 'certificationAuthority' } -SearchBase "CN=Certification Authorities,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)") {
+try {
+   Get-ADObject -Filter { ObjectClass -eq 'certificationAuthority' } -SearchBase "CN=Certification Authorities,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).defaultNamingContext)"
    Set-ESC5 -VulnUsers $VulnUsers 
    Set-ESC7 -VulnUsers $VulnUsers 
+} catch {
+   Write-Host "    [+] No Certificate Authority on the local domain. Skipping.." -ForegroundColor Yellow
 }
 
 # ATTACK - PrintNightmare Vulnerabilities
