@@ -61,8 +61,6 @@
             -Surname $Surname -Description $Description -UserPrincipalName $UPN -EmailAddress $UPN -Enabled $True -Path $OUPath `
             -AccountPassword (ConvertTo-SecureString ($Password) -AsPlainText -Force)
         }
-
     }
+    Write-Progress -Id 1 -Activity "Created AD Users" -Status "Completed" -PercentComplete 100 -Completed
 }
-
-Write-Progress -Id 1 -Activity "Created AD Users" -Status "Completed" -PercentComplete 100 -Completed
