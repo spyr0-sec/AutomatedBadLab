@@ -39,7 +39,7 @@ Function New-WeakADCSTemplates {
                         -SamAccountName "Domain Users" -ComputerName $CertAuthority
 
     Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Configuring Client Authentication application policy & user supplied SANs" -ScriptBlock {
-        Get-ADObject "CN=ESC1,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)" -Properties * |
+        Get-ADObject "CN=ESC1,CN=Certificate Templates,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)" -Properties * |
         Set-ADObject -Replace @{
             'msPKI-Certificate-Name-Flag' = 1
             'pKIExtendedKeyUsage' = '1.3.6.1.5.5.7.3.2'
@@ -52,7 +52,7 @@ Function New-WeakADCSTemplates {
                         -SamAccountName "Domain Users" -ComputerName $CertAuthority 
 
     Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Configuring Any Purpose application policy & user supplied SANs" -ScriptBlock {
-        Get-ADObject "CN=ESC2,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)" -Properties * |
+        Get-ADObject "CN=ESC2,CN=Certificate Templates,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)" -Properties * |
         Set-ADObject -Replace @{
             'msPKI-Certificate-Name-Flag' = 1
             'pKIExtendedKeyUsage' = '2.5.29.37.0'
@@ -65,8 +65,10 @@ Function New-WeakADCSTemplates {
                         -SamAccountName "Domain Users" -ComputerName $CertAuthority 
 
     Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Configuring user supplied SANs" -ScriptBlock {
-        $PKSContainer = "CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)"
-        Get-ADObject "CN=ESC3,CN=Certificate Templates,$PKSContainer" -Properties * | Set-ADObject -Add @{'msPKI-RA-Application-Policies' = '1.3.6.1.4.1.311.20.2.1'}
+        Get-ADObject "CN=ESC3,CN=Certificate Templates,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)" -Properties * | 
+        Set-ADObject -Add @{
+            'msPKI-RA-Application-Policies' = '1.3.6.1.4.1.311.20.2.1'
+        }
     }
 
     #--------------------------------------------------------------------------------------------------------------------
@@ -79,7 +81,7 @@ Function New-WeakADCSTemplates {
         $GenericAll = [System.DirectoryServices.ActiveDirectoryRights]::GenericAll
         $Allow = [System.Security.AccessControl.AccessControlType]::Allow
 
-        $ESC4Obj = "AD:CN=ESC4,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)"
+        $ESC4Obj = "AD:CN=ESC4,CN=Certificate Templates,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)"
 
         $ESC4ACL = Get-Acl $ESC4Obj
         $ESC4AccessRule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule $AuthenticatedUsers,$GenericAll,$Allow
@@ -121,12 +123,9 @@ Function New-WeakADCSTemplates {
 
     # New-LabCATemplate doesn't support CT_FLAG_NO_SECURITY_EXTENSION so need to patch msPKI-Enrollment-Flag manually
     Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Add CT_FLAG_NO_SECURITY_EXTENSION to ESC9 Template" -ScriptBlock {
-        $PKSContainer = "CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)"
-
         # Add CT_FLAG_NO_SECURITY_EXTENSION flag to Certificate Template
-        $ESC9CertTemplate = Get-ADObject "CN=ESC9,CN=Certificate Templates,$PKSContainer" -Properties msPKI-Enrollment-Flag
-
-        Set-ADObject -Identity $ESC9CertTemplate.DistinguishedName -Replace @{
+        Get-ADObject "CN=ESC9,CN=Certificate Templates,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)" -Properties msPKI-Enrollment-Flag |
+        Set-ADObject -Replace @{
             'msPKI-Enrollment-Flag' = 0x00080000
         }
     }
@@ -146,7 +145,7 @@ Function New-WeakADCSTemplates {
                         -SamAccountName "Domain Users" -ComputerName $CertAuthority -Version 2
     
     Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Group Link OID to Users DN" -ScriptBlock {
-        $PKSContainer = "CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)"
+        $PKSContainer = "CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)"
 
         # Create an empty universal AD group
         New-ADGroup -Name "ESC13" -GroupScope Universal -Path "CN=Users,$((Get-ADRootDSE).defaultNamingContext)"
