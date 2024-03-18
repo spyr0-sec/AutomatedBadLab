@@ -45,6 +45,5 @@ Function New-BLGroup {
         Write-Progress -Id 1 -Activity "Creating AD Groups.." -Status "Creating Group $CreatedGroups of $GroupCount" `
         -CurrentOperation $GroupName -PercentComplete ($CreatedGroups / $GroupCount * 100)
     } 
+    Write-Progress -Id 1 -Activity "Created AD Groups" -Status "Completed" -PercentComplete 100 -Completed
 }
-
-Write-Progress -Id 1 -Activity "Created AD Groups" -Status "Completed" -PercentComplete 100 -Completed
