@@ -109,7 +109,7 @@ Start-Sleep -Seconds 300
 #--------------------------------------------------------------------------------------------------------------------
 
 Write-ScreenInfo "Creating GPPPassword files"
-Copy-LabFileItem -ComputerName BLDC01 -Recurse -Path $CustomScripts\AutomatedBadLab\AD_Attack_Vectors\GPPPassword\ -Destination "C:\Windows\Sysvol\sysvol\$Domain\Policies" -Verbose
+Copy-LabFileItem -ComputerName BLDC01 -Recurse -Path $CustomScripts\AutomatedBadLab\AD_Attack_Vectors\GPPPassword\ -Destination "C:\Windows\Sysvol\sysvol\$Domain\Policies"
 
 Write-ScreenInfo "Creating Domain structure and objects via AutomatedBadLab"
 Start-Transcript -Append -Path "$CustomScripts\AutomatedBadLab\$(Get-Date -f 'yyyy_MM_dd')_AutomatedBadLab.log"
