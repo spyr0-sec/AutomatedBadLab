@@ -17,7 +17,7 @@ Function Set-ESC7 {
 
         # Get the CA Objects to modify
         $CAComputer = Get-ADComputer -Identity (Get-ADGroupMember -Identity "Cert Publishers" | Where-Object objectClass -EQ computer).name
-        $CAName = (Get-ADObject -LDAPFilter "(ObjectClass=certificationAuthority)" -SearchBase "CN=Certification Authorities,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)").Name
+        $CAName = (Get-ADObject -LDAPFilter "(ObjectClass=certificationAuthority)" -SearchBase "CN=Certification Authorities,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)").Name
 
         $Paths = @("Configuration\$($CAName)", "Security")
 

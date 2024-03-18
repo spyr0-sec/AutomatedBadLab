@@ -9,7 +9,7 @@ Function Remove-AllBLADCSObjects {
     $CertAuthority = (Get-LabVM -Role CaRoot)
 
     Invoke-LabCommand -ComputerName $CertAuthority -ActivityName "Remove AutomatedBadLab Certifcate Templates" -ScriptBlock {
-        $CAObjects = Get-ADObject -Filter * -SearchBase "CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)" -SearchScope 2 | Where-Object name -like "*ESC*"
+        $CAObjects = Get-ADObject -Filter * -SearchBase "CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)" -SearchScope 2 | Where-Object name -like "*ESC*"
 
         # Remove the CA AD Object as well as the CA Template
         foreach ($CAObject in $CAObjects) {
