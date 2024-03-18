@@ -34,7 +34,7 @@ Function New-BLComputer {
             # Create the computer object with random attributes
             New-ADComputer -Name $Name `
                 -SAMAccountName $Name `
-                -DNSHostName "$Name.$((Get-AdDomain).Forest)" `
+                -DNSHostName "$Name.$((Get-AdDomain).DNSRoot)" `
                 -Enabled $True `
                 -Description $Description `
                 -Location "Building $(Get-Random -Minimum 1 -Maximum 10), Floor $(Get-Random -Minimum 1 -Maximum 5)" `
@@ -53,7 +53,7 @@ Function New-BLComputer {
             # Create the computer object with random attributes
             New-ADComputer -Name $Name `
                 -SAMAccountName $Name `
-                -DNSHostName "$Name.$((Get-AdDomain).Forest)" `
+                -DNSHostName "$Name.$((Get-AdDomain).DNSRoot)" `
                 -Enabled $True `
                 -Description $Description `
                 -Location "Building $(Get-Random -Minimum 1 -Maximum 10), Floor $(Get-Random -Minimum 1 -Maximum 5)" `

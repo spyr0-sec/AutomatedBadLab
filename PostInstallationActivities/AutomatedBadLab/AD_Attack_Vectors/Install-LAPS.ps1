@@ -44,7 +44,8 @@ Function Install-LAPS {
 
     # Pick a random vulnerable user to give LAPS Extended Rights
     $VulnUser = $VulnUsers | Get-Random
-    Set-LapsADReadPasswordPermission -Identity $LapsOU -AllowedPrincipals "$((Get-ADDomain).Forest)\$($VulnUser.SamAccountName)"
+    $LAPSUser = "$((Get-ADDomain).DNSRoot)\$($VulnUser.SamAccountName)"
+    Set-LapsADReadPasswordPermission -Identity $LapsOU -AllowedPrincipals $LAPSUser
 
     Write-Host "    [+] $VulnUser can read $LAPSComputer LAPS password" -ForegroundColor Yellow
 
@@ -61,7 +62,7 @@ Function Install-LAPS {
         "PasswordComplexity" = 4
         "PasswordExpirationProtectionEnabled" = 1
         "ADPasswordEncryptionEnabled" = 1
-        "ADPasswordEncryptionPrincipal" = "$((Get-ADDomain).Forest)\$($VulnUser.SamAccountName)"
+        "ADPasswordEncryptionPrincipal" = $LAPSUser
         "ADEncryptedPasswordHistorySize" = 12
         "ADBackupDSRMPassword" = 1
         "PostAuthenticationResetDelay" = 12
@@ -83,7 +84,7 @@ Function Install-LAPS {
     Invoke-GPUpdate -Computer $LAPSComputer.DNSHostName -RandomDelayInMinutes 0 -Force -Target Computer
 
     # Configure Auditing to see what this looks like when abused
-    Set-LapsADAuditing -Identity $LapsOU -AuditedPrincipals "$((Get-ADDomain).Forest)\$($VulnUser.SamAccountName)" -AuditType Success,Failure
+    Set-LapsADAuditing -Identity $LapsOU -AuditedPrincipals $LAPSUser -AuditType Success,Failure
 
     # Invoke LAPS Policy Processing after our changes
     Invoke-LapsPolicyProcessing

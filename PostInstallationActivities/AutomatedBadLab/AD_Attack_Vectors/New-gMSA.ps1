@@ -13,8 +13,8 @@ Function New-gMSA {
     $BLComputer = (Get-ADComputer -Filter 'Description -like "*AutomatedBadLab*"' | Get-Random).DNSHostName
     $Name = "SPFarm$(Get-Random -Minimum 1 -Maximum 9)"
  
-    # Create the KDS Root Key 
-    Add-KdsRootKey –EffectiveTime ((Get-Date).addhours(-10))
+    # Create the KDS Root Key
+    Add-KdsRootKey -EffectiveTime ((Get-Date).AddHours(-10))
 
     # Create the gMSA
     New-ADServiceAccount $Name `
@@ -22,9 +22,9 @@ Function New-gMSA {
         -PrincipalsAllowedToRetrieveManagedPassword $gMSAUser `
         -KerberosEncryptionType RC4, AES128, AES256 `
         -ServicePrincipalNames `
-            "http/$Name.$((Get-AdDomain).Forest)/$((Get-AdDomain).Forest)", `
-            "http/$Name.$((Get-AdDomain).Forest)/$((Get-AdDomain).NetBIOSName)", `
-            "http/$Name/$((Get-AdDomain).Forest)", `
+            "http/$Name.$((Get-AdDomain).DNSRoot)/$((Get-AdDomain).DNSRoot)", `
+            "http/$Name.$((Get-AdDomain).DNSRoot)/$((Get-AdDomain).NetBIOSName)", `
+            "http/$Name/$((Get-AdDomain).DNSRoot)", `
             "http/$Name/$((Get-AdDomain).NetBIOSName)"
     
     Write-Host "    [+] $gMSAUser can retrieve $Name gMSA password" -ForegroundColor Yellow

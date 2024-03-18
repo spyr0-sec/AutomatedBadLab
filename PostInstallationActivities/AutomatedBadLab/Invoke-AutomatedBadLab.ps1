@@ -64,8 +64,10 @@ $VulnUsers += Set-PasswordInDescription -VulnUsers $SecondHalf
 # ATTACK - Pre 2k Computer Account
 New-Pre2KComputerAccount 
 
-# ATTACK - Enable Anonymous LDAP Read Access
-Enable-AnonymousLDAP
+# ATTACK - Enable Anonymous LDAP Read Access (Only needs to be once per forest)
+If ((Get-ADDomain).DistinguishedName -eq (Get-ADRootDSE).rootDomainNamingContext) {
+   Enable-AnonymousLDAP
+}
 
 # Secondary Attack Vectors ----------------------------------------------------
 # Now employ multiple attack vectors on our vulnerable users
