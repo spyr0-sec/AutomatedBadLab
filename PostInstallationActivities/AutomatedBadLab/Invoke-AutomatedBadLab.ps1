@@ -9,6 +9,9 @@ Import-Module -Name (Join-Path $PSScriptRoot 'AutomatedBadLab.psm1') -Force
 # Get a handful of users to make vulnerable
 [int32]$VulnerableCount = Get-Random -Minimum 4 -Maximum 11
 
+# Start the misconfiguration of the AD
+Write-Host "[+] (Mis)Configuring $((Get-ADDomain).DNSRoot).." -ForegroundColor Green
+
 # Weaken AD Password Policies
 Set-WeakPasswordPolicy
 
