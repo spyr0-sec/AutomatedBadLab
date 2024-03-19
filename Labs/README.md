@@ -4,14 +4,17 @@ These scripts are provided to assist getting labs up and running as easily as po
 ## Templates
 All templates are headered with a section of common parameters to change. The only other considerations are if a external network has been configured and the names of your VMs.
 
+### Build Times
+These timings are assuming base images have already been created for the selected operating system
+
 - Active Directory (<1hr build time)
     - Domain Controller + Workstation
     - Explains several AutomatedLab features
         - Roles / PostInstallationActivities / Running remote commands etc.
-- AutomatedBadLab (~3hr build time - much less if OS updates are not required)
+- AutomatedBadLab (~2hr build time +1hr if OS updates are required)
     - Domain Controller + Certificate Authority + Workstation
     - Updates operating systems (Useful if using evaluation ISOs)
-    - Provisions AutomatedBadLab with several AD & ADCS vulnerabilities (See PostInstallationActivities\AutomatedBadLab\README.md for full details)
+    - Provisions AutomatedBadLab with several AD & ADCS vulnerabilities ([full details](../PostInstallationActivities/AutomatedBadLab/README.md))
     - Removes Windows Defender from the Workstation
     - Includes AutomatedBadLab revert script - useful for debugging
 - Router (~20 minutes build time)

@@ -20,6 +20,9 @@ VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[Generic
 VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[msDS-AllowedToActOnBehalfOfOtherIdentity]-> CN=Rebecca Barron,OU=Devices,OU=AZR,OU=Tier 2,DC=badblood,DC=uk
 ```
 
+## Multi-Domains 
+AutomatedBadLab is also supported in Root / Child Domains and Forest scenarios. The [Forest Template](../../Labs/1.%20Template%20Forest.ps1) script provides an example of how it can be deployed on multiple Domain Controllers. 
+
 ## Full list of supported ATTACK vectors
 - "Primary"
     - Anonymous LDAP
@@ -52,3 +55,4 @@ VERBOSE: CN=Nancie Holmes,OU=Groups,OU=BDE,OU=Tier 1,DC=badblood,DC=uk -[msDS-Al
     - Protected Users Bypass
     - Active Directory Certificate Services (AD CS) ESC1-10b & 13
     - PrintNightmare Vulnerabilities
+    - Foreign Memberships
