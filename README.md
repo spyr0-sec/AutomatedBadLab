@@ -11,14 +11,16 @@ Scripts to create vulnerable and testing environments using AutomatedLab
     Enable-LabHostRemoting -Force
     New-LabSourcesFolder -DriveLetter C
     ```
-- Change parameters at the top of the `Labs\1. Template Standalone.ps1` and run
+- Change parameters at the top of the [Standalone Template](Labs/1.%20Template%20Standalone.ps1) and run
 - OPTIONAL BUT RECOMMENDED
     - Modify the Router template file
     - Update all parameters within the first comment block
     - Execute the script to create a DHCP router to provide routing between lab networks
 
-## CustomRoles / PostInstallationActivities
-There are also several other scripts provided that may be useful when setting up other types of environments. Check individual READMEs for more information.
+## Advanced Labs
+There are also several other scripts provided to provision more complex labs:
+- [Lab Templates](./Labs/README.md)
+- [AutomatedBadLab Provisioning](./PostInstallationActivities/AutomatedBadLab/README.md)
 
 ## Acknowledgements
 - The [AutomatedLab Team](https://github.com/AutomatedLab/AutomatedLab/graphs/contributors)
