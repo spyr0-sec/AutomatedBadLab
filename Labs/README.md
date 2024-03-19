@@ -11,7 +11,7 @@ These timings are assuming base images have already been created for the selecte
     - Domain Controller + Workstation
     - Explains several AutomatedLab features
         - Roles / PostInstallationActivities / Running remote commands etc.
-- AutomatedBadLab (~2hr build time +1hr if OS updates are required)
+- AutomatedBadLab (~1hr build time +1hr if Forest +1hr if OS updates are required)
     - Domain Controller + Certificate Authority + Workstation
     - Updates operating systems (Useful if using evaluation ISOs)
     - Provisions AutomatedBadLab with several AD & ADCS vulnerabilities ([full details](../PostInstallationActivities/AutomatedBadLab/README.md))
