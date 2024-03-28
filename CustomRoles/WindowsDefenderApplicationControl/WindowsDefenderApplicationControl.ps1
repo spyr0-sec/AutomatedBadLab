@@ -7,20 +7,27 @@ Param (
     [bool]$DCS
 )
 
-$LogFilePath = "C:\WDACInstall.log"
-
-function Write-Log {
+Function Write-Log {
     param (
         [Parameter(Mandatory = $true)]
-        [string]$Message
+        [string]$Message,
+        
+        [ValidateSet("Default", "Informational", "Warning")]
+        [string]$Level = "Default"
     )
 
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $LogMessage = "[+] $Timestamp - $Message"
-    $LogMessage | Out-File -FilePath $LogFilePath -Append
+    
+    switch ($Level) {
+        "Default"       { $LogMessage = "$Timestamp - [+] $Message" }
+        "Informational" { $LogMessage = "$Timestamp -   [+] $Message" }
+        "Warning"       { $LogMessage = "$Timestamp -   [!] $Message" }
+    }
+    
+    $LogMessage | Out-File -FilePath "C:\WDACInstall.log" -Append
 }
 
-Write-Log -Message "Installing Windows Defender Application Control.."
+Write-Log -Message "Installing Windows Defender Application Control"
 
 # Grab Example CI as template
 $WDACPolicyPath = $env:windir + "\System32\CodeIntegrity\CIPolicies\Active"
@@ -28,21 +35,21 @@ $WDACPolicyPath = $env:windir + "\System32\CodeIntegrity\CIPolicies\Active"
 If ($Action -eq "Allow") {
     $ExamplePolicyXML = "C:\Windows\schemas\CodeIntegrity\ExamplePolicies\DefaultWindows_Audit.xml"
     If ($DCS) {
-        $WDACPolicyName = "AutomatedBadLab_Audit_DCS_Allow.xml"
+        $WDACPolicyName = "Audit_DCS_Allow.xml"
         Write-Log -Message "Creating new WDAC Policy in Allow mode with Auditing plus Dynamic Code Security"
     }
     Else {
-        $WDACPolicyName = "AutomatedBadLab_Audit_Allow.xml"
+        $WDACPolicyName = "Audit_Allow.xml"
         Write-Log -Message "Creating new WDAC Policy in Allow mode with Auditing"
     }
 } Else {
     $ExamplePolicyXML = "C:\Windows\schemas\CodeIntegrity\ExamplePolicies\DenyAllAudit.xml"
     If ($DCS) {
-        $WDACPolicyName = "AutomatedBadLab_Audit_DCS_Deny.xml"
+        $WDACPolicyName = "Audit_DCS_Deny.xml"
         Write-Log -Message "Creating new WDAC Policy in Deny mode with Auditing plus Dynamic Code Security"
     }
     Else {
-        $WDACPolicyName = "AutomatedBadLab_Audit_Deny.xml"
+        $WDACPolicyName = "Audit_Deny.xml"
         Write-Log -Message "Creating new WDAC Policy in Deny mode with Auditing"
     }
 }

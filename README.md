@@ -1,26 +1,27 @@
 # AutomatedBadLab
-Scripts to create vulnerable and testing environments using AutomatedLab
+InfoSec focused Custom Roles for AutomatedLab
 
 ## Quick Start
-- Windows machine with HyperV Enabled
-- Windows ISOs (Recommend [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/) if MSDN is not available to you)
+- Enable HyperV
+- Upload Windows ISOs to `C:\LabSources\ISOs` (Recommend [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/) if MSDN is not available to you)
 - Install [AutomatedLab](https://automatedlab.org/en/latest/Wiki/Basic/install/)
-    ```powershell
+    ``` PowerShell
     Install-PackageProvider Nuget -Force
     Install-Module AutomatedLab -SkipPublisherCheck -AllowClobber
     Enable-LabHostRemoting -Force
     New-LabSourcesFolder -DriveLetter C
     ```
-- Change parameters at the top of the [Standalone Template](Labs/1.%20Template%20Standalone.ps1) and run
-- OPTIONAL BUT RECOMMENDED
-    - Modify the Router template file
-    - Update all parameters within the first comment block
-    - Execute the script to create a DHCP router to provide routing between lab networks
+- Build a DHCP / Internet Router VM via the [Router Template](./Labs/1.%20Template%20Router.ps1)
 
-## Advanced Labs
-There are also several other scripts provided to provision more complex labs:
-- [Lab Templates](./Labs/README.md)
-- [AutomatedBadLab Provisioning](./PostInstallationActivities/AutomatedBadLab/README.md)
+## Building Labs
+Several templates have been provided in the Labs subdirectory to get started. Additionally, each Custom Role comes with its own README and in some cases a Lab Template to demonstrate its use:
+- [AutomatedBadLab Role](./CustomRoles/AutomatedBadLab/README.md)
+- [AutomatedBadLab Lab Template](./Labs/1.%20Template%20AutomatedBadLab.ps1)
+
+[RDCMan](https://learn.microsoft.com/en-us/sysinternals/downloads/rdcman) is recommended for managing RDP connection profiles. AutomatedLab updates the local hosts file during the build process, so only NETBIOS names are required to connect to lab machines.
+
+## Further Reading
+[TrustedSec Blog Post](https://trustedsec.com/blog/offensive-lab-environments-without-the-suck) provides a great runthrough on how to get set up.
 
 ## Acknowledgements
 - The [AutomatedLab Team](https://github.com/AutomatedLab/AutomatedLab/graphs/contributors)
