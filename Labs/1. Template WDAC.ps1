@@ -4,6 +4,7 @@ $LabName         = 'WDACTemplate'
 $AdminUser       = 'wsadmin'
 $AdminPass       = 'complexpassword'
 $MachineName     = 'WDAC01'
+$Subnet          = '10.10.X.0/24'
 
 # Get-LabAvailableOperatingSystem will list all available OSes to you
 $OperatingSystem = 'Windows 11 Enterprise Evaluation'
@@ -11,14 +12,14 @@ $OperatingSystem = 'Windows 11 Enterprise Evaluation'
 # WDAC Options
 [ValidateSet("Allow", "Deny")]
 [string]$WDACAction = "Allow"
-[bool]$WDACDCS = $True # True, False
+[bool]$WDACDCS = $True
 
 #--------------------------------------------------------------------------------------------------------------------
-# CUSTOMROLE INSTLLATION
-$ALCustomRolesFilePath = $labSources + '\CustomRoles'
+# CUSTOMROLE INSTALLATION
+$ABLCustomRolesFilePath = Join-Path $PSScriptRoot "..\CustomRoles"
 
 # Copy the subdirectories of CustomRoles to the lab sources
-Copy-Item -Path "C:\AutomatedBadLab\CustomRoles\*" -Destination $ALCustomRolesFilePath -Recurse -ErrorAction SilentlyContinue
+Copy-Item -Path $ABLCustomRolesFilePath -Destination $labSources -Force -Recurse
 
 #--------------------------------------------------------------------------------------------------------------------
 # LAB CREATION
@@ -27,6 +28,17 @@ New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
 
 # Create a domain admin account to handle Windows machine creation / Active Directory configration. 
 Set-LabInstallationCredential -Username $AdminUser -Password $AdminPass
+
+#--------------------------------------------------------------------------------------------------------------------
+# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
+# For Internal networks, just need a name and subnet space. Internet Network is a static NAT network
+Add-LabVirtualNetworkDefinition -Name $labName -AddressSpace $Subnet
+Add-LabVirtualNetworkDefinition -Name "Internet" -AddressSpace 10.10.0.0/24
+
+# Machines share a common Dual-homed NIC configuration
+$NICs = @()
+$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
+$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
 
 #--------------------------------------------------------------------------------------------------------------------
 # DEFAULT MACHINE PARAMETERS
@@ -40,24 +52,15 @@ $PSDefaultParameterValues = @{
 }
 
 #--------------------------------------------------------------------------------------------------------------------
-# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
-# Give Workstation Internet access via NAT switch
-$VSwitch = Get-VMSwitch | Where-Object SwitchType -eq 'External'
-Add-LabVirtualNetworkDefinition -Name $VSwitch.Name -HyperVProperties @{
-    SwitchType = $VSwitch.SwitchType
-    AdapterName = $VSwitch.NetAdapterInterfaceDescription
-}
-
-#--------------------------------------------------------------------------------------------------------------------
 # MACHINE CREATION - https://automatedlab.org/en/latest/Wiki/Basic/addmachines/
-
-# Install Windows Defender Application Control Custom Role
-$WDACRole = Get-LabPostInstallationActivity -CustomRole WindowsDefenderApplicationControl -Properties @{
+$PostInstallJobs = @() # Will execute in order
+$PostInstallJobs += Get-LabPostInstallationActivity -CustomRole WindowsDefenderApplicationControl -Properties @{
     Action = $WDACAction
     DCS = $WDACDCS
 }
+$PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveFirstRunExperience
 
-Add-LabMachineDefinition -Name $MachineName -Network $VSwitch.Name -PostInstallationActivity $WDACRole
+Add-LabMachineDefinition -Name $MachineName -PostInstallationActivity $PostInstallJobs
 
 # Install our lab, has flags for level of output
 Install-Lab # -Verbose -Debug

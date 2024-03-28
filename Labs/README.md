@@ -1,30 +1,55 @@
 # Labs
 These scripts are provided to assist getting labs up and running as easily as possible
 
-## Templates
-All templates are headered with a section of common parameters to change. The only other considerations are if a external network has been configured and the names of your VMs.
+## Template Structure
+For all provided templates, the user only needs to change the parameters in the first section which are clearly marked:
+``` PowerShell
+#--------------------------------------------------------------------------------------------------------------------
+# Global parameters - CHANGEME
+$LabName         = 'StandaloneTemplate'
+$AdminUser       = 'wsadmin'
+$AdminPass       = 'complexpassword'
+$MachineName     = 'WS01'
+$Subnet          = '10.10.X.0/24'
 
-### Build Times
-These timings are assuming base images have already been created for the selected operating system
+# Get-LabAvailableOperatingSystem will list all available OSes to you
+$OperatingSystem = 'Windows 10 Enterprise Evaluation'
 
-- Active Directory (<1hr build time)
-    - Domain Controller + Workstation
-    - Explains several AutomatedLab features
-        - Roles / PostInstallationActivities / Running remote commands etc.
-- AutomatedBadLab (~1hr build time +1hr if Forest +1hr if OS updates are required)
-    - Domain Controller + Certificate Authority + Workstation
-    - Updates operating systems (Useful if using evaluation ISOs)
-    - Provisions AutomatedBadLab with several AD & ADCS vulnerabilities ([full details](../PostInstallationActivities/AutomatedBadLab/README.md))
-    - Removes Windows Defender from the Workstation
-    - Includes AutomatedBadLab revert script - useful for debugging
-- Router (~20 minutes build time)
-    - Windows Server with DHCP Role
-    - Configures NAT on your local machine to provide external routing to other Lab machines 
-- Standalone (~10 minutes build time)
-    - Creates a single internet-connected box
-- WDAC (~10 minutes build time)
-    - Example of Custom Roles which install a user defined WDAC policy
-- DevBox (~30 minutes build time)
-    - Machine pre-installed with Visual Studio + VS Code for development
+#--------------------------------------------------------------------------------------------------------------------
+```
 
-As this is pure Powershell, this should (hopefully) provide consistent and repeatable environments. However AutomatedLab does come with [checkpoint](https://automatedlab.org/en/latest/AutomatedLab/en-us/Checkpoint-LabVM/) functionality that is useful rather than recreating the whole environment. 
+The rest of the template follows a similar structure which hopefully should make it easy for users to build their own labs:
+- Pull in any local Custom Role changes
+- Create the lab definition
+- Create local / domain user accounts
+- Configure networking
+- Provide default machine parameters
+- Create each machine definition
+    - Add CustomRoles
+    - Add NetworkAdapters
+- Install lab
+- Execute post-install scripts
+- Display deployment summary
+
+## Checkpoints
+As this is pure Powershell, this should (hopefully) provide consistent and repeatable environments. AutomatedLab features [checkpoint](https://automatedlab.org/en/latest/AutomatedLab/en-us/Checkpoint-LabVM/) which is recommended to revert labs rather than rebuilding.
+
+``` PowerShell
+Checkpoint-LabVM -ComputerName DC01 -SnapshotName "$(Get-Date) - Build Complete"
+```
+
+## Build Times
+These rough timings are assuming base images have already been created for the selected operating system
+
+- Single Machine
+    - Client OS (~10 minutes)
+    - Server OS (<10 minutes)
+- Router 
+    - Windows Server with DHCP Role (~20 minutes)
+- Active Directory
+    - Domain Controller + Certificate Authority + Workstation (~60 minutes)
+    - AutomatedBadLab AD / ADCS / Trust Provisioning Roles (+20 minutes)
+- DevBox 
+    - Client OS + Visual Studio & VS Code Installation Roles (~30 minutes)
+- Windows Updates Role
+    - Dependant on how many, adds 30+ minutes per machine

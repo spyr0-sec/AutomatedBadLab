@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------------------------------------------------
 # CHANGEME - Global parameters
-$LabName        = 'LabTemplate'
+$LabName        = 'ActiveDirectoryTemplate'
 $Subnet         = '10.10.X.0/24'
 
 # CHANGEME - Active Directory parameters
@@ -19,6 +19,13 @@ $CustomScripts  = 'C:\AutomatedBadLab\PostInstallationActivities'
 #netsh interface portproxy add v4tov4 listenport=$LPORT listenaddress=0.0.0.0 connectport=3389 connectaddress=$RHOST
 
 #--------------------------------------------------------------------------------------------------------------------
+# CUSTOMROLE INSTALLATION
+$ABLCustomRolesFilePath = Join-Path $PSScriptRoot "..\CustomRoles"
+
+# Copy the subdirectories of CustomRoles to the lab sources
+Copy-Item -Path $ABLCustomRolesFilePath -Destination $labSources -Force -Recurse
+
+#--------------------------------------------------------------------------------------------------------------------
 # LAB CREATION
 # Create our lab using HyperV (Azure is also supported)
 New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
@@ -33,6 +40,13 @@ Add-LabIsoImageDefinition -Name Office2016 -Path "$labSources\ISOs\Office 2016 P
 # Create a domain admin account to handle Windows machine creation / Active Directory configration. 
 Set-LabInstallationCredential -Username $DomainUser -Password $DomainPass
 Add-LabDomainDefinition -Name $Domain -AdminUser $DomainUser -AdminPassword $DomainPass
+
+#--------------------------------------------------------------------------------------------------------------------
+# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
+# Machines share a common Dual-homed NIC configuration
+$NICs = @()
+$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
+$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
 
 #--------------------------------------------------------------------------------------------------------------------
 # DEFAULT MACHINE PARAMETERS
@@ -51,8 +65,6 @@ $PSDefaultParameterValues = @{
 
 #--------------------------------------------------------------------------------------------------------------------
 # POST INSTALLATION ACTIVITIES - https://automatedlab.org/en/latest/Wiki/Basic/invokelabcommand/
-# Recommend Invoke-LabCommand to run PowerShell commands on the Lab VMs after Install-Lab rather than PostInstallActivities
-
 # AL comes with a script to create a couple of test users to the domain. AutomatedBadLab can be used for more complex labs
 $ADPrep = Get-LabPostInstallationActivity -ScriptFileName 'PrepareRootDomain.ps1' -DependencyFolder $CustomScripts\PrepareRootDomain
 
@@ -83,27 +95,15 @@ $WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
 Add-LabMachineDefinition -Name DC01 -Roles RootDC -IpAddress $DCIP -PostInstallationActivity $ADPrep
 
 # For the workstation, use Get-LabAvailableOperatingSystem to get correct OS name
-Add-LabMachineDefinition -Name WS01 -NetworkAdapter $WS1NICs -OperatingSystem 'Windows 10 Enterprise Evaluation'
+$WS1PostInstallJobs = @() # Will execute in order
+$WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveFirstRunExperience
+$WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveWindowsDefender
+$WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
+
+Add-LabMachineDefinition -Name WS01 -NetworkAdapter $WS1NICs -OperatingSystem 'Windows 10 Enterprise Evaluation' -PostInstallationActivity $WS1PostInstallJobs
 
 # Install our lab, has flags for level of output
 Install-Lab # -Verbose -Debug
-
-#--------------------------------------------------------------------------------------------------------------------
-# RUNNING COMMANDS
-# Create a library of common PowerShell scripts you may want to run such as updating Windows
-Invoke-LabCommand -ComputerName (Get-LabVM) -ActivityName UpdateWindows -FileName 'Update-Windows.ps1' -DependencyFolderPath $CustomScripts\UpdateWindows
-
-# FILE TRANSFER BETWEEN HOST AND GUEST - https://automatedlab.org/en/latest/Wiki/Basic/exchangedata/
-# Example - Disabling Windows Defender via a batch file
-
-# Add Defender exclusion before uploading the script
-Invoke-LabCommand -ComputerName (Get-LabVM) -ActivityName AddExclusions -ScriptBlock { Set-MpPreference -ExclusionPath "C:\Windows\Temp"; Set-MpPreference -ExclusionExtension "bat" }
-
-# Upload Batch file to remove Windows Defender
-Copy-LabFileItem -ComputerName (Get-LabVM) -Path $CustomScripts\RemoveWindowsDefender\RemoveWindowsDefender.bat -Destination "C:\Windows\Temp"
-
-# Run the batch file as TrustedInstaller via Scheduled Task
-Invoke-LabCommand -ComputerName (Get-LabVM) -ActivityName RemoveDefender -FileName 'Remove-WindowsDefender.ps1' -DependencyFolderPath $CustomScripts\RemoveWindowsDefender
 
 #--------------------------------------------------------------------------------------------------------------------
 # INSTALLING SOFTWARE / FEATURES - https://automatedlab.org/en/latest/Wiki/Basic/installsoftware/

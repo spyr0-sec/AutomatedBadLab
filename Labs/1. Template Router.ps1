@@ -15,8 +15,12 @@ $Gateway                = "10.10.0.1"
 $DNSServer              = "8.8.8.8"
 $ClassC                 = ($AddressSpace -split "/")[0] -replace "\.\d$", ""
 
-# Path to our custom provisioning scripts
-$CustomScripts = "C:\AutomatedBadLab\PostInstallationActivities"
+#--------------------------------------------------------------------------------------------------------------------
+# CUSTOMROLE INSTALLATION
+$ABLCustomRolesFilePath = Join-Path $PSScriptRoot "..\CustomRoles"
+
+# Copy the subdirectories of CustomRoles to the lab sources
+Copy-Item -Path $ABLCustomRolesFilePath -Destination $labSources -Force -Recurse
 
 #--------------------------------------------------------------------------------------------------------------------
 
@@ -44,7 +48,10 @@ $PSDefaultParameterValues = @{
 
 #--------------------------------------------------------------------------------------------------------------------
 # Create the Windows Server (DHCP role to be configured Post-Install)
-Add-LabMachineDefinition -Name $RouterName
+$RouterPostInstallJobs = @() # Will execute in order
+$RouterPostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
+
+Add-LabMachineDefinition -Name $RouterName -PostInstallationActivity $RouterPostInstallJobs
 
 #--------------------------------------------------------------------------------------------------------------------
 # Install our lab, has flags for level of output
@@ -68,24 +75,6 @@ Invoke-LabCommand -ActivityName "Configure DHCP" -ComputerName (Get-LabVM) -Scri
     New-LocalGroup -Name "DHCP Administrators" -Description "Full control of the DHCP Server."
     New-LocalGroup -Name "DHCP Users" -Description "Members who have view-only access to the DHCP service"
 } -ArgumentList $ClassC, $Gateway, $DNSServer
-
-# Update Windows
-Invoke-LabCommand -ComputerName (Get-LabVM) -ActivityName UpdateWindows -FileName 'Update-Windows.ps1' -DependencyFolderPath $CustomScripts\UpdateWindows
-
-Write-ScreenInfo "Waiting for Windows Update to complete on $RouterName..."
-$RouterUptime = (Get-VM -Name $RouterName).Uptime
-
-do {
-    Write-Progress -Id 1 -Activity "Updating Windows" -Status "Waiting for Reboot" 
-    Start-Sleep -Seconds 60
-    $currentUptime = (Get-VM -Name $RouterName).Uptime
-
-# If current uptime is less than the initial uptime, the VM has restarted
-} while ($currentUptime -ge $RouterUptime)
-
-Write-Progress -Id 1 -Activity "Updating Windows" -Status "Completed" -PercentComplete 100 -Completed
-Write-ScreenInfo "Waiting five minutes after update to become active again before continuing"
-Start-Sleep -Seconds 300
 
 # Provides a pretty table detailing all elements of what has been created
 Show-LabDeploymentSummary -Detailed
