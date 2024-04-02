@@ -24,18 +24,8 @@
 # (9) Attackers having GenericAll / WriteDacl over the CA AD Object
 # (10) EDITF_ATTRIBUTESUBJECTALTNAME2 configured to permit User Supplied SANs 
 
-
-#param(
-#    [Parameter(Mandatory)]
-#    [string]$ComputerName
-#)
-
-#Import-Lab -Name $data.Name
-
-$ComputerName = "BBCA01"
-
 # CA machine object to create the Certificate Templates on
-$CertificationAuthority = Get-LabVM -ComputerName $ComputerName
+$CertificationAuthority = Get-LabVM -Role CaRoot
 
 # DC machine object to conduct Certificate Template AD object manipulation
 $DomainController = (Get-LabVM -Role RootDC | Where-Object { $_.DomainName -eq $CertificationAuthority.DomainName })
