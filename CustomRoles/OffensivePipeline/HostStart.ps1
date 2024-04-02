@@ -3,7 +3,7 @@ param(
     [string]$ComputerName
 )
 
-Import-Lab -Name $data.Name
+Import-Lab -Name $data.Name -NoValidation
 
 # Add Defender exclusion before uploading the script (won't work if Defender has already been destroyed)
 Invoke-LabCommand -ComputerName $ComputerName -ActivityName "Add AV Exclusions" -ScriptBlock { 

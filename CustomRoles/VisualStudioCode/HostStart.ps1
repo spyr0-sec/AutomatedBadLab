@@ -5,13 +5,7 @@ param
     $ComputerName
 )
 
-$lab = Import-Lab -Name $data.Name -NoValidation -NoDisplay -PassThru
-
-if (-not $lab)
-{
-    Write-Error -Message 'Please deploy a lab first.'
-    return
-}
+Import-Lab -Name $data.Name -NoValidation
 
 # Specify locations
 $VSCodeFilePath = "$labSources\SoftwarePackages\VSCode.exe"

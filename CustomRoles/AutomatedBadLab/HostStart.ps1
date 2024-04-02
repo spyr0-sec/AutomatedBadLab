@@ -3,7 +3,7 @@ param(
     [string]$ComputerName
 )
 
-Import-Lab -Name $data.Name
+Import-Lab -Name $data.Name -NoValidation
 
 # Take a snapshot of the DC before we start making changes
 Write-ScreenInfo "Creating snapshot of base DC"
