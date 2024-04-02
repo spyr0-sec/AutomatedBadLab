@@ -7,9 +7,9 @@ $PostInstallJobs = @() # Will execute in order
 $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveWindowsDefender
 $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole OffensivePipeline
 $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole AnonymousSMBShare -Properties @{
-    SMBName ='Tools'
-    SMBPath ='C:\OffensivePipeline\OfensivePipeline_v2.0.0\Output'
-    SMBDescription ='Obfsucated Tools Share'
+    SMBName        = 'Tools'
+    SMBPath        = 'C:\OffensivePipeline\OfensivePipeline_v2.0.0\Output'
+    SMBDescription = 'Obfsucated Tools Share'
 }
 
 Add-LabMachineDefinition -Name TOOLSERVER1 -PostInstallationActivity $PostInstallJobs
