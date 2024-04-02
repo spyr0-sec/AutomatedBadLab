@@ -103,6 +103,12 @@ Install-Lab # -Verbose -Debug
 foreach ($DC in $DCDictionary.GetEnumerator()) {
     Invoke-LabCommand -ComputerName $DC.Name -ActivityName CreateForeignMemberships -FileName Add-ForeignMemberships.ps1 `
     -DependencyFolderPath $ABLPostInstallActivitiesFilePath\AutomatedBadLabTrusts
+    # Retrieve logs from each DC
+    $DC = Get-LabVM -ComputerName $DC.Name
+    $DCSession = New-LabPSSession -ComputerName $DC.Name
+    Receive-File -SourceFilePath C:\AutomatedBadLab.log -DestinationFilePath "$PSScriptRoot\$($DC.DomainName)_AutomatedBadLab.log" -Session $DCSession
+    Remove-LabPSSession -ComputerName $DC.Name
+    Write-ScreenInfo "Downloaded logs to $PSScriptRoot\$($DC.DomainName)_AutomatedBadLab.log"
 }
 
 # Provides a pretty table detailing all elements of what has been created
