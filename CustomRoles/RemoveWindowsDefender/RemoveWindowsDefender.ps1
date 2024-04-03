@@ -1,5 +1,3 @@
-# https://gist.github.com/Diagg/c3ca51c8a3d9d7665fbaf4252b1346ef
-
 Function Write-Log {
     param (
         [Parameter(Mandatory = $true)]
@@ -20,31 +18,38 @@ Function Write-Log {
     $LogMessage | Out-File -FilePath "C:\WindowsDefenderRemoval.log" -Append
 }
 
-Write-Log -Message "Creating Windows Defender Removal Scheduled Task"
+Add-MpPreference -ExclusionPath "C:\Windows\Temp"
+
+Write-Log -Message "Created AV exclusions for the files to be uploaded."
+
+Invoke-WebRequest -Uri "https://github.com/ionuttbara/windows-defender-remover/archive/refs/heads/main.zip" -OutFile "C:\Windows\Temp\DefenderRemover.zip"
+
+Expand-Archive -Path "C:\Windows\Temp\DefenderRemover.zip" -DestinationPath "C:\Windows\Temp"
+
+Write-Log -Message "Downloaded and extracted the Windows Defender Remover script."
+
+# Define the path to your original batch file
+$batchFilePath = "C:\Windows\Temp\windows-defender-remover-main\Script_Run.bat"
 
 # Enable Scheduled Task history logging for debugging
 wevtutil set-log Microsoft-Windows-TaskScheduler/Operational /enabled:true
 
-# Create the scheduled task action
-$batFilePath = "C:\Windows\Temp\RemoveWindowsDefender.bat"
-$Action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $batFilePath"
+Write-Log -Message "Creating Windows Defender Removal Scheduled Task" 
 
-# Create an object containing the administrator group principal
-$Principal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators"
+# Create the scheduled task action
+$Action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $batchFilePath Y"
+
+# Get the time a minute from now
+$Time = (Get-Date).AddMinutes(1)
+
+# Create a new scheduled task trigger to run once at the specified time
+$Trigger = New-ScheduledTaskTrigger -Once -At $Time
+
+# Run the scheduled task as SYSTEM
+$User = "NT AUTHORITY\SYSTEM"
 
 # Register the scheduled task
-Register-ScheduledTask -TaskName "RemoveWindowsDefender" -Action $Action -Principal $Principal
+Register-ScheduledTask -TaskName "RemoveWindowsDefender" -Trigger $Trigger -Action $Action -User $User -RunLevel Highest -Force
 
-# Register-ScheduledTask doesn't support running as TrustedInstaller, so we need to use the COM object
-$svc = New-Object -ComObject 'Schedule.Service'
-$svc.Connect()
-
-# Run the created scheduled task as TrustedInstaller
-$user = 'NT SERVICE\TrustedInstaller'
-$folder = $svc.GetFolder('\')
-$task = $folder.GetTask('RemoveWindowsDefender')
-
-# Start Task
-$task.RunEx($null, 0, 0, $user)
-
-Write-Log -Message ".bat script executed. Waiting for reboot"
+# Output the result
+Write-Log -Message "Windows Defender will be removed at $Time. Please wait until the system reboots before proceeding" 
