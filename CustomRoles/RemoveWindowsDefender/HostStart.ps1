@@ -7,7 +7,7 @@ Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Add Defender exclusion before uploading the script
 Invoke-LabCommand -ComputerName $ComputerName -ActivityName "Add AV Exclusions" -ScriptBlock { 
-    Set-MpPreference -ExclusionPath "C:\Windows\Temp"
+    Add-MpPreference -ExclusionPath "C:\Windows\Temp"
     Add-MpPreference -ExclusionExtension "bat" 
 }
 
