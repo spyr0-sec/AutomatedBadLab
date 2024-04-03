@@ -27,7 +27,7 @@ Function Write-Log {
 
 # Download the cookbook 
 Write-Log -Message "Downloading the cookbook"
-Invoke-WebRequest -Uri "https://github.com/spyr0-sec/Windows-Local-Privilege-Escalation-Cookbook/archive/refs/heads/master.zip" -OutFile "C:\Windows-Local-Privilege-Escalation-Cookbook.zip"
+Invoke-WebRequest -Uri "https://github.com/nickvourd/Windows-Local-Privilege-Escalation-Cookbook/archive/refs/heads/master.zip" -OutFile "C:\Windows-Local-Privilege-Escalation-Cookbook.zip"
 
 # Unzip the cookbook
 Write-Log -Message "Unzipping the cookbook"
