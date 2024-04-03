@@ -5,7 +5,7 @@
     $ComputerName
 )
 
-Import-Lab -Name $data.Name -NoValidation
+Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Specify locations
 $VS2022FilePath = "$labSources\SoftwarePackages\vs2022_community.exe"

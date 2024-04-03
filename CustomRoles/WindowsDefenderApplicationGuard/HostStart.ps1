@@ -3,7 +3,7 @@ param(
     [string]$ComputerName
 )
 
-Import-Lab -Name $data.Name -NoValidation
+Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 Install-LabWindowsFeature -ComputerName $ComputerName -FeatureName Windows-Defender-ApplicationGuard
 

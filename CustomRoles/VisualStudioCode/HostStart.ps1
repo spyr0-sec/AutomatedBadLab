@@ -5,7 +5,7 @@ param
     $ComputerName
 )
 
-Import-Lab -Name $data.Name -NoValidation
+Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Specify locations
 $VSCodeFilePath = "$labSources\SoftwarePackages\VSCode.exe"

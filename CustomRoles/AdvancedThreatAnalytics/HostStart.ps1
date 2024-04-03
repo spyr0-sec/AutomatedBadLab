@@ -6,7 +6,7 @@
     [string]$ATAIsoFilePath
 )
 
-Import-Lab -Name $data.Name -NoValidation
+Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Check if the ISO file exists
 If (-not (Test-Path -Path $ATAIsoFilePath))
