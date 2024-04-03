@@ -36,7 +36,7 @@ wevtutil set-log Microsoft-Windows-TaskScheduler/Operational /enabled:true
 $Command = "Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot | Out-File -FilePath $LogFilePath -Append"
 
 # Get the time a minute from now
-$Time = (Get-Date).AddMinutes(2)
+$Time = (Get-Date).AddMinutes(1)
 
 # Create a new scheduled task trigger to run once at the specified time
 $Trigger = New-ScheduledTaskTrigger -Once -At $Time
