@@ -76,6 +76,9 @@ If ((Get-ADDomain).DistinguishedName -eq (Get-ADRootDSE).rootDomainNamingContext
 # ATTACK - Enable Guest Account
 Enable-GuestUser
 
+# ATTACK - Create task to spray Administator password 
+New-SMBSprayer
+
 # Secondary Attack Vectors ----------------------------------------------------
 # Now employ multiple attack vectors on our vulnerable users
 

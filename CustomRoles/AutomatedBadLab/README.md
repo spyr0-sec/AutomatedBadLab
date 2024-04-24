@@ -52,6 +52,7 @@ AutomatedBadLab is also supported in Root / Child Domains and Forest scenarios. 
     - Pre-2K Computer Objects
     - Timeroasting
     - Enabled Guest User
+    - SMB Password Capture
 - "Secondary"
     - SMB Signing
     - Machine Coercion
