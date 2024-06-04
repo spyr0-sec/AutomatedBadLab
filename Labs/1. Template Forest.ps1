@@ -14,7 +14,7 @@ $SecondDomain    = 'us.allsafe.com'
 
 $RootDC          = 'ECDC01'
 $RootCA          = 'ECCA01'
-$ChildDC         = 'ECEUDC02'
+$ChildDC         = 'ECEUDC01'
 $SecondDC        = 'ASDC01'
 
 # CHANGEME - Certificate Authority parameters
