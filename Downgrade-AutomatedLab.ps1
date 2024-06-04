@@ -5,13 +5,14 @@
 
 Get-Module AutomatedLab* | Remove-Module -Verbose
 
-$latestAutomatedLabVersion = (Find-Module AutomatedLab).Version
+$latestAutomatedLabVersion = (Find-Module AutomatedLabCore).Version
 $requiredAutomatedLabVersion = "5.50.0"
+
 Install-Module -Name AutomatedLab -RequiredVersion $requiredAutomatedLabVersion -Force -SkipPublisherCheck -AllowClobber
 If ( $requiredAutomatedLabVersion -ne $latestAutomatedLabVersion ) {
-    "AutomatedLabDefinition", "AutomatedLabNotifications", "AutomatedLabTest", "AutomatedLabWorker", "AutomatedLabUnattended", "AutomatedLab.Ships", "AutomatedLab.Recipe", "AutomatedLabCore", "AutomatedLab" | ForEach-Object {
-        Install-Module -Name $_ -RequiredVersion $requiredAutomatedLabVersion -Verbose -Force
+    "AutomatedLabDefinition", "AutomatedLabNotifications", "AutomatedLabTest", "AutomatedLabWorker", "AutomatedLabUnattended", "AutomatedLab.Ships", "AutomatedLab.Recipe", "AutomatedLabCore" | ForEach-Object {
         Uninstall-Module -Name $_ -RequiredVersion $latestAutomatedLabVersion -Verbose -Force
+        Install-Module -Name $_ -RequiredVersion $requiredAutomatedLabVersion -Verbose -Force -SkipPublisherCheck -AllowClobber
     }
 }
 
