@@ -42,13 +42,6 @@ Set-LabInstallationCredential -Username $DomainUser -Password $DomainPass
 Add-LabDomainDefinition -Name $Domain -AdminUser $DomainUser -AdminPassword $DomainPass
 
 #--------------------------------------------------------------------------------------------------------------------
-# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
-# Machines share a common Dual-homed NIC configuration
-$NICs = @()
-$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
-
-#--------------------------------------------------------------------------------------------------------------------
 # DEFAULT MACHINE PARAMETERS
 # Giving DomainName will automatically make all machines join the domain 
 # These can be overwritten as seen for WS01 - Windows 10 is wanted rather than Server 2019

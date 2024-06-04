@@ -60,7 +60,7 @@ $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole WindowsDefenderA
 }
 $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveFirstRunExperience
 
-Add-LabMachineDefinition -Name $MachineName -PostInstallationActivity $PostInstallJobs
+Add-LabMachineDefinition -Name $MachineName -NetworkAdapter $NICs -PostInstallationActivity $PostInstallJobs
 
 # Install our lab, has flags for level of output
 Install-Lab # -Verbose -Debug
