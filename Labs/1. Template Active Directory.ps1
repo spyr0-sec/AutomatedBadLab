@@ -7,7 +7,6 @@ $Subnet         = '10.10.X.0/24'
 $DomainUser     = 'domainadmin'
 $DomainPass     = 'complexpassword'
 $Domain         = 'domain.tld' 
-$DCIP           = '10.10.X.10'
 
 # Path to our custom provisioning scripts
 $CustomScripts  = 'C:\AutomatedBadLab\PostInstallationActivities'
@@ -49,7 +48,6 @@ $PSDefaultParameterValues = @{
     'Add-LabMachineDefinition:Network'          = $labName
     'Add-LabMachineDefinition:ToolsPath'        = "$labSources\Tools"
     'Add-LabMachineDefinition:DomainName'       = $Domain 
-    'Add-LabMachineDefinition:DnsServer1'       = $DCIP
     'Add-LabMachineDefinition:MinMemory'        = 1GB
     'Add-LabMachineDefinition:Memory'           = 4GB
     'Add-LabMachineDefinition:MaxMemory'        = 8GB
