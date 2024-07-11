@@ -143,3 +143,8 @@ Disable-SMBSigning
 
 # ATTACK - Enable SMB Reflection
 Enable-Reflection
+
+# DEFEND ----------------------------------------------------------------------
+
+# Enable all Auditing types on the DC
+Enable-AllDCAuditingEvents
