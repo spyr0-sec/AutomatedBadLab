@@ -61,7 +61,7 @@ Function Install-LAPS {
         "PasswordLength" = 24
         "PasswordComplexity" = 4
         "PasswordExpirationProtectionEnabled" = 1
-        "ADPasswordEncryptionEnabled" = 1
+        "ADPasswordEncryptionEnabled" = 0
         "ADPasswordEncryptionPrincipal" = $LAPSUser
         "ADEncryptedPasswordHistorySize" = 12
         "ADBackupDSRMPassword" = 1
