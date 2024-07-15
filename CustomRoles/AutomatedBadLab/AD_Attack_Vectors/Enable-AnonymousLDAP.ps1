@@ -7,20 +7,21 @@ Function Enable-AnonymousLDAP {
     # Domain Distinguished Name
     $ADDN = (Get-ADDomain).DistinguishedName
 
-    # First set DSHeuristics to 0000002 = Anonymous Bind
-    Set-ADObject -Identity "CN=Directory Service,CN=Windows NT,CN=Services,CN=Configuration,$ADDN" -Replace @{DSHeuristics="0000002"}
-
     # RootDSE Path
     $RootDNPath = "AD:\$ADDN"
 
     # Get Anonymous Logon SID
     $anonymousId = New-Object System.Security.Principal.NTAccount("NT AUTHORITY\ANONYMOUS LOGON")
 
+    # Set the rights and type
+    $aclRights = [System.DirectoryServices.ActiveDirectoryRights]::ReadProperty -bor [System.DirectoryServices.ActiveDirectoryRights]::GenericExecute
+    $allowType = [System.Security.AccessControl.AccessControlType]::Allow
+
     # Will also set the permissions to all child objects
     $secInheritanceAll = [System.DirectoryServices.ActiveDirectorySecurityInheritance]::All
 
     # Set the permissions
-    $Ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($anonymousId, "ReadProperty, GenericExecute", "Allow", $secInheritanceAll)
+    $Ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($anonymousId, $aclRights, $allowType, $secInheritanceAll)
     $Acl = Get-Acl -Path $RootDNPath
     $Acl.AddAccessRule($Ace)
     Set-Acl -Path $RootDNPath -AclObject $Acl
