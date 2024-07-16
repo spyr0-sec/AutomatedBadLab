@@ -1,4 +1,6 @@
 Function New-SMBSprayer {
+
+    Write-Log -Message "Creating SMB Sprayer Scheduled Task"
    
     # Script to attempt SMB connections to all machines in local subnets
     $Command = @'
