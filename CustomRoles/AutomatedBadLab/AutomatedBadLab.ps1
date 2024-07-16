@@ -31,8 +31,8 @@ New-BLGroup -GroupCount $GroupCount -ErrorAction SilentlyContinue
 # Computer Creation
 New-BLComputer -ComputerCount $ComputerCount -ErrorAction SilentlyContinue
 
-# Randomise Group Memberships
-Add-RandomObjectsToGroups 
+# Randomise Group Memberships and Object Locations
+Set-ABLObjectLocationAndMemberships
 
 # Move DC back to the Domain Controllers OU
 Set-DCLocation
