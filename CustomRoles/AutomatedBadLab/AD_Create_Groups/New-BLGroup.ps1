@@ -27,7 +27,7 @@ Function New-BLGroup {
 
         # If the group already exists, break out of the loop and try again
         If (Get-ADGroup -Filter { SamAccountName -eq $GroupName }) {
-            Break
+            Continue
         }
 
         $GroupScope = 'DomainLocal', 'Global', 'Universal' | Get-Random
