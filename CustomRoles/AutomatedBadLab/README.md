@@ -77,6 +77,7 @@ AutomatedBadLab is also supported in Root / Child Domains and Forest scenarios. 
     - Active Directory Certificate Services (AD CS) ESC1-10b & 13
     - PrintNightmare Vulnerabilities
     - Foreign Memberships
+    - BitLocker Recovery Keys
 
 ## Requirements
 - None
