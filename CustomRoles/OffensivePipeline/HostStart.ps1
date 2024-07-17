@@ -3,6 +3,7 @@ param(
     [string]$ComputerName
 )
 
+# Import Lab
 Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Add Defender exclusion before uploading the script (won't work if Defender has already been destroyed)

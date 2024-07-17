@@ -3,6 +3,7 @@ param(
     [string]$ComputerName
 )
 
+# Import Lab
 Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Take a snapshot of the DC before we start making changes

@@ -5,6 +5,7 @@ param
     $ComputerName
 )
 
+# Import Lab
 Import-Lab -Name $data.Name -NoValidation -NoDisplay
 
 # Specify locations

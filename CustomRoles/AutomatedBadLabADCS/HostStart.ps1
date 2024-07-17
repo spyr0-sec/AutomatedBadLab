@@ -24,6 +24,9 @@
 # (9) Attackers having GenericAll / WriteDacl over the CA AD Object
 # (10) EDITF_ATTRIBUTESUBJECTALTNAME2 configured to permit User Supplied SANs 
 
+# Import Lab
+Import-Lab -Name $data.Name -NoValidation -NoDisplay
+
 # CA machine object to create the Certificate Templates on
 $CertificationAuthority = Get-LabVM -Role CaRoot
 
@@ -192,6 +195,35 @@ Invoke-LabCommand -ComputerName $DomainController -ActivityName "Group Link OID 
         $Domain.ObjectSecurity.AddAccessRule($ace)
         $Domain.CommitChanges()
     }
+}
+
+#--------------------------------------------------------------------------------------------------------------------
+# Configure LDAPS for GMSA Attacks
+Invoke-LabCommand -ComputerName $DomainController -ActivityName "Configure StartTLS for LDAP" -ScriptBlock {
+    # DC Information
+    $DC = Get-ADDomainController
+
+    # Generate a self-signed certificate for the LDAP server
+    $LDAPSCert = New-SelfSignedCertificate -DnsName "$($DC.Forest)" -CertStoreLocation "cert:\LocalMachine\My" -KeyLength 2048 -KeyExportPolicy Exportable `
+    -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -HashAlgorithm SHA256 -NotAfter (Get-Date).AddYears(5) -FriendlyName "LDAP SSL Certificate"
+
+    # Export the certificate to a file
+    $LDAPSCertFilePath = "C:\LDAPSCert.cer"
+    $LDAPSCertPassword = ConvertTo-SecureString -String "P@ssw0rd!23" -Force -AsPlainText
+    Export-PfxCertificate -Cert "cert:\LocalMachine\My\$($LDAPSCert.Thumbprint)" -FilePath "$LDAPSCertFilePath" -Password $LDAPSCertPassword
+
+    # Import the certificate into the NTDS store
+    Import-PfxCertificate -FilePath "$LDAPSCertFilePath" -CertStoreLocation "cert:\LocalMachine\NTDS" -Password $LDAPSCertPassword
+
+    # Restart the AD DS service
+    Restart-Service -Name NTDS
+    Start-Sleep -Seconds 30
+
+    # Bind the SSL certificate to the LDAP service
+    New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" -Name "ClientCertSubject" -Value $DC.ComputerObjectDN -Force
+
+    # Add the Service Principal Name (SPN) for LDAPS
+    Set-ADDomainController -Identity $DC.Hostname -ServicePrincipalName @{Add="LDAP/$($DC.Hostname):636"}
 }
 
 Write-ScreenInfo "Enabling Auto-enrollment for Certificates"
