@@ -61,9 +61,28 @@ Function New-BLComputer {
                 -OperatingSystemServicePack "Service Pack $(Get-Random -Minimum 0 -Maximum 3)" `
         }
 
+        # Create the BitLocker Recovery Class to mimic Recovery Keys
+        New-ADObject -Name "$((Get-Date).ToString("yyyy-MM-ddTHH:mm:sszzz")){$([guid]::NewGuid().ToString().ToUpper())}" `
+        -Type 'msFVE-RecoveryInformation' `
+        -Path "$((Get-ADComputer -Identity $Name).DistinguishedName)" `
+        -OtherAttributes @{
+            'msFVE-RecoveryPassword' = New-BitLockerKey
+            'msFVE-RecoveryGuid' = [guid]::NewGuid().ToString()
+        }
+
         # Track progress
         Write-Progress -Id 1 -Activity "Creating AD Computers" -Status "Creating Computer $CreatedComputers of $ComputerCount" `
         -CurrentOperation $Name -PercentComplete ($CreatedComputers / $ComputerCount * 100)
     }
     Write-Progress -Id 1 -Activity "Created AD Computers" -Status "Completed" -PercentComplete 100 -Completed
+}
+
+Function New-BitLockerKey {
+    # Generates a representative 48-digit BitLocker key
+
+    $BitLockerKey = ""
+    for ($i = 1; $i -le 48; $i++) {
+        $BitLockerKey += Get-Random -Minimum 0 -Maximum 10
+    }
+    return $BitLockerKey -replace '(.{6})(?!$)', '$1-'
 }
