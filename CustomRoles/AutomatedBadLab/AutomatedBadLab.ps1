@@ -13,6 +13,9 @@ foreach ($ABLFunction in $ABLFunctions) {
     . $ABLFunction
 }
 
+# Import Active Directory Module
+Import-Module ActiveDirectory
+
 # Start the misconfiguration of the AD
 Write-Log -Message "(Mis)Configuring $((Get-ADDomain).DNSRoot)"
 
