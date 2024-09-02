@@ -116,6 +116,9 @@ New-RBCDUser -VulnUsers $VulnUsers
 # ATTACK - Domain Controller GPO Abuse
 New-DCGPO -VulnUsers $VulnUsers 
 
+# ATTACK - Local Privileged Group Members
+Add-LocalPrivilegedGroupMembers -VulnUsers $VulnUsers
+
 # ATTACK - Protected Users Bypass
 Enable-ProtectedAdmin
 
