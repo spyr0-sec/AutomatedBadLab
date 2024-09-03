@@ -13,7 +13,7 @@ Function Add-LocalPrivilegedGroupMembers {
 
     foreach ($Computer in $NonABLComputers) {
 
-        $VulnUser = $VulnUsers | Get-Random -Count 1
+        $VulnUser = ($VulnUsers | Get-Random -Count 1).SamAccountName
 
         Write-Log -Message "Adding $VulnUser to the local privileged groups on $($Computer.DNSHostName)"
 
