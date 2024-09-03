@@ -1,4 +1,3 @@
-
 Function Add-LocalPrivilegedGroupMembers {
 
     [CmdletBinding()]
