@@ -4,10 +4,9 @@ $LabName         = 'StandaloneTemplate'
 $AdminUser       = 'wsadmin'
 $AdminPass       = 'complexpassword'
 $MachineName     = 'WS01'
-$Subnet          = '10.10.X.0/24'
 
 # Get-LabAvailableOperatingSystem will list all available OSes to you
-$OperatingSystem = 'Windows 10 Enterprise Evaluation'
+$OperatingSystem = 'Windows 11 Enterprise Evaluation'
 
 #--------------------------------------------------------------------------------------------------------------------
 # CUSTOMROLE INSTALLATION
@@ -21,24 +20,18 @@ Copy-Item -Path $ABLCustomRolesFilePath -Destination $labSources -Force -Recurse
 # Create our lab using HyperV (Azure is also supported)
 New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
 
+# Retrieve the name of the external network switch
+. Join-Path -Path $PSScriptRoot -ChildPath '..\Functions\Get-ExternalNetworkSwitch.ps1'
+$ExternalNetwork = Get-ExternalNetworkSwitch
+Add-LabVirtualNetworkDefinition -Name $ExternalNetwork.Name -HyperVProperties @{ SwitchType = $ExternalNetwork.SwitchType ; AdapterName = $ExternalNetwork.NetAdapterInterfaceDescription }
+
 # Create a local admin account
 Set-LabInstallationCredential -Username $AdminUser -Password $AdminPass
 
 #--------------------------------------------------------------------------------------------------------------------
-# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
-# For Internal networks, just need a name and subnet space. Internet Network is a static NAT network
-Add-LabVirtualNetworkDefinition -Name $labName -AddressSpace $Subnet
-Add-LabVirtualNetworkDefinition -Name "Internet" -AddressSpace 10.10.0.0/24
-
-# Machines share a common Dual-homed NIC configuration
-$NICs = @()
-$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
-
-#--------------------------------------------------------------------------------------------------------------------
 # DEFAULT MACHINE PARAMETERS
 $PSDefaultParameterValues = @{
-    'Add-LabMachineDefinition:Network'          = $labName
+    'Add-LabMachineDefinition:Network'          = $ExternalNetwork.Name
     'Add-LabMachineDefinition:ToolsPath'        = "$labSources\Tools"
     'Add-LabMachineDefinition:MinMemory'        = 1GB
     'Add-LabMachineDefinition:Memory'           = 4GB
@@ -52,7 +45,7 @@ $PostInstallJobs = @() # Will execute in order
 $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveFirstRunExperience
 $PostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
 
-Add-LabMachineDefinition -Name $MachineName -NetworkAdapter $NICs -PostInstallationActivity $PostInstallJobs
+Add-LabMachineDefinition -Name $MachineName -PostInstallationActivity $PostInstallJobs
 
 # Install our lab, has flags for level of output
 Install-Lab #-Verbose -Debug

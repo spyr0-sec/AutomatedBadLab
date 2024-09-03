@@ -1,7 +1,6 @@
 #--------------------------------------------------------------------------------------------------------------------
 # CHANGEME - Global parameters
 $LabName        = 'AutomatedBadLabTemplate'
-$Subnet         = '10.10.X.0/24'
 
 # CHANGEME - Active Directory parameters
 $DomainUser     = 'domainadmin'
@@ -28,22 +27,21 @@ New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
 Add-LabDomainDefinition -Name $Domain -AdminUser $DomainUser -AdminPassword $DomainPass
 Set-LabInstallationCredential -Username $DomainUser -Password $DomainPass
 
-#--------------------------------------------------------------------------------------------------------------------
-# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
-# For Internal networks, just need a name and subnet space. Internet Network is a static NAT network
-Add-LabVirtualNetworkDefinition -Name $labName -AddressSpace $Subnet
-Add-LabVirtualNetworkDefinition -Name "Internet" -AddressSpace 10.10.0.0/24
+# Retrieve the name of the external network switch
+. Join-Path -Path $PSScriptRoot -ChildPath '..\Functions\Get-ExternalNetworkSwitch.ps1'
+$ExternalNetwork = Get-ExternalNetworkSwitch
+Add-LabVirtualNetworkDefinition -Name $ExternalNetwork.Name -HyperVProperties @{ SwitchType = $ExternalNetwork.SwitchType ; AdapterName = $ExternalNetwork.NetAdapterInterfaceDescription }
 
 #--------------------------------------------------------------------------------------------------------------------
 # Defining default parameter values, as these ones are the same for all the machines. 
 $PSDefaultParameterValues = @{
-    'Add-LabMachineDefinition:Network'          = $labName
+    'Add-LabMachineDefinition:Network'          = $ExternalNetwork.Name
     'Add-LabMachineDefinition:ToolsPath'        = "$labSources\Tools"
     'Add-LabMachineDefinition:DomainName'       = $Domain 
     'Add-LabMachineDefinition:MinMemory'        = 1GB
     'Add-LabMachineDefinition:Memory'           = 4GB
     'Add-LabMachineDefinition:MaxMemory'        = 8GB
-    'Add-LabMachineDefinition:OperatingSystem'  = 'Windows Server 2019 Standard Evaluation (Desktop Experience)'
+    'Add-LabMachineDefinition:OperatingSystem'  = 'Windows Server 2022 Standard Evaluation (Desktop Experience)'
 }
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -52,12 +50,7 @@ $DC1PostInstallJobs = @() # Will execute in order
 $DC1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
 $DC1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole AutomatedBadLab
 
-# Machines share a common Dual-homed NIC configuration but AutomatedLab doesn't permit reuse a NetworkAdapter object
-$DC1NICs = @()
-$DC1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$DC1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
-
-Add-LabMachineDefinition -Name BBDC01 -Roles RootDC -NetworkAdapter $DC1NICs -PostInstallationActivity $DC1PostInstallJobs
+Add-LabMachineDefinition -Name BBDC01 -Roles RootDC -PostInstallationActivity $DC1PostInstallJobs
 
 # Certificate Authority provisioning
 $CARole = Get-LabMachineRoleDefinition -Role CaRoot @{
@@ -70,12 +63,7 @@ $CARole = Get-LabMachineRoleDefinition -Role CaRoot @{
 $CA1PostInstallJobs = @() # Will execute in order
 $CA1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole AutomatedBadLabADCS
 
-# Machines share a common Dual-homed NIC configuration but AutomatedLab doesn't permit reuse a NetworkAdapter object
-$CA1NICs = @()
-$CA1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$CA1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
-
-Add-LabMachineDefinition -Name BBCA01 -Roles $CARole -NetworkAdapter $CA1NICs -PostInstallationActivity $CA1PostInstallJobs
+Add-LabMachineDefinition -Name BBCA01 -Roles $CARole -PostInstallationActivity $CA1PostInstallJobs
 
 # Workstation provisioning
 $WS1PostInstallJobs = @() # Will execute in order
@@ -83,13 +71,8 @@ $WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveFirstRu
 $WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveWindowsDefender
 $WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
 
-# Machines share a common Dual-homed NIC configuration but AutomatedLab doesn't permit reuse a NetworkAdapter object
-$WS1NICs = @()
-$WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
-
 # For the workstation, use Get-LabAvailableOperatingSystem to get correct OS name
-Add-LabMachineDefinition -Name BBWS01 -NetworkAdapter $WS1NICs -PostInstallationActivity $WS1PostInstallJobs -OperatingSystem 'Windows 10 Enterprise Evaluation' 
+Add-LabMachineDefinition -Name BBWS01 -PostInstallationActivity $WS1PostInstallJobs -OperatingSystem 'Windows 10 Enterprise Evaluation' 
 
 # Install our lab, has flags for level of output
 Install-Lab #-Verbose -Debug

@@ -2,21 +2,23 @@
 InfoSec focused Custom Roles for AutomatedLab
 
 ## Quick Start
-- Enable HyperV
-- Upload Windows ISOs to `C:\LabSources\ISOs` (Recommend [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/) if MSDN is not available to you)
-- Install [AutomatedLab](https://automatedlab.org/en/latest/Wiki/Basic/install/)
-    ``` PowerShell
-    Install-PackageProvider Nuget -Force
-    Install-Module AutomatedLab -SkipPublisherCheck -AllowClobber
-    Enable-LabHostRemoting -Force
-    New-LabSourcesFolder -DriveLetter C
-    ```
-- Build a DHCP / Internet Router VM via the [Router Template](./Labs/1.%20Template%20Router.ps1)
+1. Enable HyperV
+2. Run `Functions\Install-AutomatedLab.ps1`
 
 ## Building Labs
-Several templates have been provided in the Labs subdirectory to get started. Additionally, each Custom Role comes with its own README and in some cases a Lab Template to demonstrate its use:
-- [AutomatedBadLab Role](./CustomRoles/AutomatedBadLab/README.md)
-- [AutomatedBadLab Lab Template](./Labs/1.%20Template%20AutomatedBadLab.ps1)
+The easiest way to get a machine is to start with is to run [Standalone Template](./Labs/1.%20Template%20Internet%20Connected%20Standalone.ps1)
+1. (First time only) Create a Windows 11 Base image to make subsequent builds much quicker
+2. Create a Windows 11 Machine
+3. Run a Windows Update Scheduled task to install all available updates
+
+To build a vulnerable Active Directory, run the [AutomatedBadLab Template](./Labs/1.%20Template%20AutomatedBadLab.ps1). 
+
+Each [Custom Role](./CustomRoles/AutomatedBadLab/README.md) comes with its own README and in some cases a Lab Template to demonstrate its use.
+
+## Notes
+If you are running AutomatedBadLab on a Virtual Machine, the recomendation is to build a DHCP / Internet Router VM via the [Router Template](./Labs/1.%20Template%20Router.ps1).
+
+Example [Active Directory Template](./Labs/1.%20Template%20Active%20Directory.ps1) which uses the dual-NIC configuration.
 
 [RDCMan](https://learn.microsoft.com/en-us/sysinternals/downloads/rdcman) is recommended for managing RDP connection profiles. AutomatedLab updates the local hosts file during the build process, so only NETBIOS names are required to connect to lab machines.
 
