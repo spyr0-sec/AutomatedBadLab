@@ -2,8 +2,7 @@
 InfoSec focused Custom Roles for AutomatedLab
 
 ## Quick Start
-1. Enable HyperV
-2. Run `Functions\Install-AutomatedLab.ps1`
+Run `Functions\Install-AutomatedLab.ps1`
 
 ## Building Labs
 The easiest way to get a machine is to start with is to run [Standalone Template](./Labs/1.%20Template%20Internet%20Connected%20Standalone.ps1)
