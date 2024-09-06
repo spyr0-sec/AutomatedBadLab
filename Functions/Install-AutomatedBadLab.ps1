@@ -6,6 +6,7 @@ if ($os.ProductType -eq 1) {
         Write-Host "  [!] HyperV not found. Installing.."
         Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -All -NoRestart
         Write-Host "  [!] HyperV Installed! Please restart machine before building machines."
+        $RestartRequired = $true
     }
     else {
         Write-Host "  [+] HyperV is already installed!"
@@ -15,6 +16,7 @@ if ($os.ProductType -eq 1) {
         Write-Host "  [!] HyperV not found. Installing.."
         Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
         Write-Host "  [!] HyperV Installed! Please restart machine before building machines."
+        $RestartRequired = $true
     }
     else {
         Write-Host "  [+] HyperV is already installed!"
@@ -30,9 +32,17 @@ Write-Host "[+] Configuring AutomatedLab"
 Enable-LabHostRemoting -Force
 New-LabSourcesFolder -DriveLetter C
 
-$DownloadISOs = Read-Host "Do you want to download Evaluation ISOs? (Y/N)"
+$DownloadISOs = Read-Host "[!] Do you want to download Evaluation ISOs? (Y/N)"
 if ($DownloadISOs -eq "Y") {
     & "$PSScriptRoot\Get-EvaluationISOs.ps1"
 }
 
-Write-Host "[+] AutomatedLab setup complete!"
+If ($RestartRequired) {
+    $Restart = Read-Host "[!] AutomatedLab setup complete! Do you want to restart the machine now? (Y/N)"
+    if ($Restart -eq "Y") {
+        Restart-Computer -Force
+    }
+}
+Else {
+    Write-Host "[+] AutomatedLab setup complete!"
+}
