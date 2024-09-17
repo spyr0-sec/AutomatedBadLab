@@ -48,10 +48,7 @@ $PSDefaultParameterValues = @{
 
 #--------------------------------------------------------------------------------------------------------------------
 # Create the Windows Server (DHCP role to be configured Post-Install)
-$RouterPostInstallJobs = @() # Will execute in order
-$RouterPostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
-
-Add-LabMachineDefinition -Name $RouterName -PostInstallationActivity $RouterPostInstallJobs
+Add-LabMachineDefinition -Name $RouterName
 
 #--------------------------------------------------------------------------------------------------------------------
 # Install our lab, has flags for level of output
