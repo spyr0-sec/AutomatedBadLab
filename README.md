@@ -1,5 +1,5 @@
 # AutomatedBadLab
-InfoSec focused Custom Roles for AutomatedLab
+PowerShell scripts to create sandboxed or vulnerable environments using HyperV and AutomatedLab
 
 ## Quick Start
 [Run the install script](./Functions/Install-AutomatedBadLab.ps1)
