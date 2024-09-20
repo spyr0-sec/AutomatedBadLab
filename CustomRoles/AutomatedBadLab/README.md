@@ -46,7 +46,7 @@ AutomatedBadLab is also supported in Root / Child Domains and Forest scenarios. 
 - "Primary"
     - Anonymous LDAP
     - Passwords in AD Description Fields
-    - Users with Weak Passwords
+    - Users with Weak / Blank Passwords
     - ASREProasting
     - Kerberoasting
     - Pre-2K Computer Objects
@@ -70,6 +70,7 @@ AutomatedBadLab is also supported in Root / Child Domains and Forest scenarios. 
     - DNSAdmins (No longer exploitable)
     - Group Policy Passwords
     - Users with Reversable Password Encryption
+    - PowerShell Web Access (PSWA)
     - Local Administrator Password Solution (LAPS)
     - Group Managed Service Accounts (gMSAs)
     - Group Policy Object (GPO) Abuse
