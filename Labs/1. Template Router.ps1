@@ -48,10 +48,7 @@ $PSDefaultParameterValues = @{
 
 #--------------------------------------------------------------------------------------------------------------------
 # Create the Windows Server (DHCP role to be configured Post-Install)
-$RouterPostInstallJobs = @() # Will execute in order
-$RouterPostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
-
-Add-LabMachineDefinition -Name $RouterName -PostInstallationActivity $RouterPostInstallJobs
+Add-LabMachineDefinition -Name $RouterName
 
 #--------------------------------------------------------------------------------------------------------------------
 # Install our lab, has flags for level of output
@@ -73,7 +70,7 @@ Invoke-LabCommand -ActivityName "Configure DHCP" -ComputerName (Get-LabVM) -Scri
     Set-DhcpServerv4OptionValue -ScopeId "$($ClassC).0" -OptionId 3 -Value $Gateway # Router
     Set-DhcpServerv4OptionValue -ScopeId "$($ClassC).0" -OptionId 6 -Value $DNSServer -Force # DNS
     New-LocalGroup -Name "DHCP Administrators" -Description "Full control of the DHCP Server."
-    New-LocalGroup -Name "DHCP Users" -Description "Members who have view-only access to the DHCP service"
+    New-LocalGroup -Name "DHCP Users" -Description "Read Only access to the DHCP service"
 } -ArgumentList $ClassC, $Gateway, $DNSServer
 
 # Provides a pretty table detailing all elements of what has been created
