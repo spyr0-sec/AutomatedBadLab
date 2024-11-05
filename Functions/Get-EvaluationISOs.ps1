@@ -27,6 +27,19 @@ If ((Get-FileHash -Path "$LocalIsoPath\Windows10_22H2_Enterprise_Evaluation.iso"
     Write-Host "  [!] Windows 10 22H2 ISO checksum does not match"
 }
 
+# Download Windows Server 2025 ISO
+Write-Host "[+] Downloading Windows 2025 ISO"
+
+$WS2025_ISO_URL = "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26100.1.240331-1435.ge_release_SERVER_EVAL_x64FRE_en-us.iso"
+Start-BitsTransfer -Source $WS2025_ISO_URL -Destination "$LocalIsoPath\Windows_Server_2025_Evaluation.iso"
+
+$WS2025_ISO_SHA256 = "16442D1C0509BCBB25B715B1B322A15FB3AB724A42DA0F384B9406CA1C124ED4"
+If ((Get-FileHash -Path "$LocalIsoPath\Windows_Server_2025_Evaluation.iso" -Algorithm SHA256).Hash -eq $WS2025_ISO_SHA256) {
+    Write-Host "  [+] Windows Server 2025 ISO checksum matches"
+} else {
+    Write-Host "  [!] Windows Server 2025 ISO checksum does not match"
+}
+
 # Download Windows Server 2022 ISO
 Write-Host "[+] Downloading Windows 2022 ISO"
 
