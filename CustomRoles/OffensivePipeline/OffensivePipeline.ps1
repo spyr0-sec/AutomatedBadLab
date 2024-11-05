@@ -60,8 +60,6 @@ Expand-Archive $ToolsZip -DestinationPath $ToolsDir
 
 Write-Log -Message "Downloading NuGet and installing packages"
 Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile "$TempDir\nuget.exe"
-& "$TempDir\nuget.exe" sources add -Name Offensive -Source https://nuget.code-offensive.net/v3/index.json
-& "$TempDir\nuget.exe" install "$PSScriptRoot\packages.config"
 
 Write-Log -Message "Obfuscating Tools"
 C:\OffensivePipeline\OfensivePipeline_v2.0.0\OffensivePipeline.exe all

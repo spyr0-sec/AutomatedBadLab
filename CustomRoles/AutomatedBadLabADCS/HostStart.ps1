@@ -23,6 +23,7 @@
 #       Get-ADObject "$CertDN" -Properties * | Set-ADObject -Add @{'msPKI-RA-Application-Policies' = '1.3.6.1.4.1.311.20.2.1'}
 # (9) Attackers having GenericAll / WriteDacl over the CA AD Object
 # (10) EDITF_ATTRIBUTESUBJECTALTNAME2 configured to permit User Supplied SANs 
+# (11) Version 1 Templates permit User Supplied msPKI-Certificate-Application-Policy
 
 # Import Lab
 Import-Lab -Name $data.Name -NoValidation -NoDisplay
@@ -196,6 +197,18 @@ Invoke-LabCommand -ComputerName $DomainController -ActivityName "Group Link OID 
         $Domain.CommitChanges()
     }
 }
+
+#--------------------------------------------------------------------------------------------------------------------
+# ESC15 - Combination of vulns (1) & (2) & (3) & (4) & (6) & (11)
+New-LabCATemplate -TemplateName "ESC15" -DisplayName "ESC15" -SourceTemplateName "User" `
+                    -SamAccountName "Domain Users" -ComputerName $CertificationAuthority -Version 1
+
+Invoke-LabCommand -ComputerName $DomainController -ActivityName "Removing Application Policies & adding user supplied SANs" -ScriptBlock {
+    Get-ADObject "CN=ESC15,CN=Certificate Templates,CN=Public Key Services,CN=Services,$((Get-ADRootDSE).configurationNamingContext)" -Properties * | 
+    Set-ADObject -Clear 'msPKI-Certificate-Application-Policy' -Replace @{
+        'msPKI-Certificate-Name-Flag' = 1
+    }
+}                    
 
 #--------------------------------------------------------------------------------------------------------------------
 # Configure LDAPS for GMSA Attacks

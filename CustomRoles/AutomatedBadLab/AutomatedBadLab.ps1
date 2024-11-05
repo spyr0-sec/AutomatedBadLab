@@ -68,6 +68,9 @@ $VulnUsers += Set-WeakPassword -VulnUsers $FirstHalf
 # ATTACK - Plaintext passwords in description field
 $VulnUsers += Set-PasswordInDescription -VulnUsers $SecondHalf 
 
+# ATTACK - Add a final vulnerable user with blank password
+$VulnUsers += Set-BlankPassword
+
 # ATTACK - Pre 2k Computer Account
 New-Pre2KComputerAccount 
 
@@ -118,6 +121,9 @@ New-DCGPO -VulnUsers $VulnUsers
 
 # ATTACK - Local Privileged Group Members
 Add-LocalPrivilegedGroupMembers -VulnUsers $VulnUsers
+
+# ATTACK - PowerShell Web Access
+Enable-PowerShellWebAccess -VulnUsers $VulnUsers
 
 # ATTACK - Protected Users Bypass
 Enable-ProtectedAdmin
