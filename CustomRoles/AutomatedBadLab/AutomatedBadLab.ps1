@@ -2,7 +2,7 @@
 Param (
    [Parameter(Mandatory = $False)][int32]$UserCount = 1000,
    [Parameter(Mandatory = $False)][int32]$GroupCount = 100,
-   [Parameter(Mandatory = $False)][int32]$ComputerCount = 1500,
+   [Parameter(Mandatory = $False)][int32]$ComputerCount = 150,
    [Parameter(Mandatory = $False)][int32]$VulnerableUserCount = (Get-Random -Minimum 4 -Maximum 11)
 )
 
