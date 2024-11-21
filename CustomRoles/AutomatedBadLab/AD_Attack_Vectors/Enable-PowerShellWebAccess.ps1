@@ -2,10 +2,10 @@ Function Enable-PowerShellWebAccess {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
-    $PSWAUser = $VulnUsers | Get-Random
+    $PSWAUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
 
     Write-Log -Message "Enabling PowerShell Web Access and granting access to $PSWAUser"
 

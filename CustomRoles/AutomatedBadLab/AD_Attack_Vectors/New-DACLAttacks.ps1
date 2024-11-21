@@ -2,7 +2,7 @@ Function New-DACLAttacks {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Providing vulnerable users write property permissions / extended rights over other users"
@@ -34,7 +34,7 @@ Function New-DACLAttacks {
     While (($executionCounts.Values | Where-Object { $_ -gt 0 }).Count -gt 0) {
 
         # Get our compromised user and a random victim user
-        $VulnUser = $VulnUsers | Get-Random
+        $VulnUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
         $VictimUser = Get-ADUser -Filter * | Get-Random
 
         # Pick a AD right to apply

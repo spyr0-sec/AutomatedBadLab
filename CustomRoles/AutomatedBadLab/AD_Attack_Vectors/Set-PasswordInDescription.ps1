@@ -2,7 +2,7 @@ Function Set-PasswordInDescription {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Putting roastable users password in their description field"

@@ -2,13 +2,13 @@ Function New-RBCDUser {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Providing a vulnerable user ability to perform RBCD attacks on a user and computer object"
 
     # Get random vulnerable user
-    $VulnUser = $VulnUsers | Get-Random
+    $VulnUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
 
     # Get the GUID for the msDS-AllowedToActOnBehalfOfOtherIdentity extended right
     $ACLMap = @{

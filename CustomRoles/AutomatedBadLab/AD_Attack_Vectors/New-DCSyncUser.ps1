@@ -2,13 +2,13 @@ Function New-DCSyncUser {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Providing a vulnerable user Replication Extended Rights to perform a DCSync"
 
     # Provide a vulnerable user Replication Extended Rights
-    $DCSyncUser = $VulnUsers | Get-Random
+    $DCSyncUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
 
     # Define the rights
     $DCSyncMap = @{

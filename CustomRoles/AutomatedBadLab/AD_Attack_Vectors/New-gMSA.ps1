@@ -3,13 +3,13 @@ Function New-gMSA {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Provide a vulnerable user privileges to a gMSA account"
 
     # Obtain variables
-    $gMSAUser = $VulnUsers | Get-Random
+    $gMSAUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
     $BLComputer = (Get-ADComputer -Filter 'Description -like "*AutomatedBadLab*"' | Get-Random).DNSHostName
     $Name = "SPFarm$(Get-Random -Minimum 1 -Maximum 9)"
  

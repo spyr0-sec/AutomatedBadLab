@@ -4,7 +4,7 @@ Function Install-LAPS {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Installing LAPS"
@@ -43,7 +43,7 @@ Function Install-LAPS {
     Write-Log -Message "$LAPSComputer moved into $LapsOU" -Level "Informational"
 
     # Pick a random vulnerable user to give LAPS Extended Rights
-    $VulnUser = $VulnUsers | Get-Random
+    $VulnUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
     $LAPSUser = "$((Get-ADDomain).DNSRoot)\$($VulnUser.SamAccountName)"
     Set-LapsADReadPasswordPermission -Identity $LapsOU -AllowedPrincipals $LAPSUser
 

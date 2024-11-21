@@ -2,13 +2,13 @@ Function New-Owner {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Providing a vulnerable user ownership over a user and computer object"
 
     # Get random vulnerable user
-    $VulnUser = $VulnUsers | Get-Random
+    $VulnUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
 
     # Get a random victim user
     $OwnerVictimUser = Get-ADUser -Filter {Description -like '*AutomatedBadLab*'} -Properties Description | Get-Random -Count 1

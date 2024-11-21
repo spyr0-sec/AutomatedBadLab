@@ -2,7 +2,7 @@ Function Add-LocalPrivilegedGroupMembers {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     # Get all computers in AD that do not have "AutomatedLab" in their description
@@ -12,7 +12,7 @@ Function Add-LocalPrivilegedGroupMembers {
 
     foreach ($Computer in $NonABLComputers) {
 
-        $VulnUser = ($VulnUsers | Get-Random -Count 1).SamAccountName
+        $VulnUser = ($VulnUsers | Get-Random -ErrorAction SilentlyContinue).SamAccountName
 
         Write-Log -Message "Adding $VulnUser to the local privileged groups on $($Computer.DNSHostName)"
 

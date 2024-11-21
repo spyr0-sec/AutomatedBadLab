@@ -2,13 +2,13 @@ Function New-DCGPO {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Providing a vulnerable user rights over Domain Controllers linked GPO"
 
     # Provide a vulnerable user GPO rights
-    $GPOUser = $VulnUsers | Get-Random
+    $GPOUser = $VulnUsers | Get-Random -ErrorAction SilentlyContinue
 
     # Create a new GPO
     $GPOName = "$((Get-ADDomain).NetBIOSName) Custom Domain Controllers Policy"

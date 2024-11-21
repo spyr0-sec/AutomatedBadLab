@@ -4,7 +4,7 @@ Function Set-WeakPassword {
     # Ensure the misconfigured users have a weak password
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Configuring Weak Passwords for roastable Users"

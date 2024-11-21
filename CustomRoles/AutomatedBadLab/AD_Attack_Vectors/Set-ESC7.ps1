@@ -2,13 +2,13 @@ Function Set-ESC7 {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $True)][Microsoft.ActiveDirectory.Management.ADUser[]]$VulnUsers
+        [Parameter(Mandatory = $True)]$VulnUsers
     )
 
     Write-Log -Message "Providing a vulnerable user danagerous rights over the CA Object (ESC7)"
 
     # Get two random and distinct users from $VulnUsers
-    $SelectedVulnUsers = ($VulnUsers | Get-Random -Count 2)
+    $SelectedVulnUsers = ($VulnUsers | Get-Random -ErrorAction SilentlyContinue -Count 2)
 
     # 1 = ManageCA || 2 = Issue Certificates
     $AccessMask = 1

@@ -12,7 +12,7 @@ Function Set-BlankPassword {
     $VulnUserADSI.Invoke("SetPassword", "")
     $VulnUserADSI.SetInfo()
 
-    Write-Log -Message "$VulnUser has a blank password" -Level "Informational"
+    Write-Log -Message "$VulnUser has a blank password"
 
     # Pass back the vulnerable users to the main script
     return $VulnUser
