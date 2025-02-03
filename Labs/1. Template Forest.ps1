@@ -112,7 +112,7 @@ foreach ($DC in $DCDictionary.GetEnumerator()) {
 }
 
 # Provides a pretty table detailing all elements of what has been created
-Show-LabDeploymentSummary -Detailed
+Show-LabDeploymentSummary
 
 <# Debugging - Remove all objects created by AutomatedBadLab
 foreach ($DC in $DCDictionary.GetEnumerator()) {

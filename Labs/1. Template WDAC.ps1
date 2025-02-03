@@ -66,4 +66,4 @@ Add-LabMachineDefinition -Name $MachineName -NetworkAdapter $NICs -PostInstallat
 Install-Lab # -Verbose -Debug
 
 # Provides a pretty table detailing all elements of what has been created
-Show-LabDeploymentSummary -Detailed
+Show-LabDeploymentSummary

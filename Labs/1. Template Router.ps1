@@ -74,4 +74,4 @@ Invoke-LabCommand -ActivityName "Configure DHCP" -ComputerName (Get-LabVM) -Scri
 } -ArgumentList $ClassC, $Gateway, $DNSServer
 
 # Provides a pretty table detailing all elements of what has been created
-Show-LabDeploymentSummary -Detailed
+Show-LabDeploymentSummary

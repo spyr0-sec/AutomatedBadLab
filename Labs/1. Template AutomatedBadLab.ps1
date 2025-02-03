@@ -107,4 +107,4 @@ Remove-AllBLADCSObjects
 #>
 
 # Provides a pretty table detailing all elements of what has been created
-Show-LabDeploymentSummary -Detailed
+Show-LabDeploymentSummary

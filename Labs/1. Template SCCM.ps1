@@ -119,4 +119,4 @@ Add-LabMachineDefinition -Name CMWS01 -NetworkAdapter $WS1NICs -PostInstallation
 Install-Lab #-Verbose -Debug
 
 # Provides a pretty table detailing all elements of what has been created
-Show-LabDeploymentSummary -Detailed
+Show-LabDeploymentSummary
