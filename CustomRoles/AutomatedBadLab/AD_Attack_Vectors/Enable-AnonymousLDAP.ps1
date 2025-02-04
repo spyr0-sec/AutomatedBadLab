@@ -25,4 +25,8 @@ Function Enable-AnonymousLDAP {
     $Acl = Get-Acl -Path $RootDNPath
     $Acl.AddAccessRule($Ace)
     Set-Acl -Path $RootDNPath -AclObject $Acl
+
+    # Configure DSHeuristics
+    $DsPath = "CN=Directory Service,CN=Windows NT,CN=Services,CN=Configuration,$ADDN"
+    Set-ADObject -Identity $DsPath -Replace @{dSHeuristics = "0000002"}
 }
