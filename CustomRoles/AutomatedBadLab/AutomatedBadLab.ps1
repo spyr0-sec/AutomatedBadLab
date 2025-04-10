@@ -91,6 +91,9 @@ New-SMBSprayer
 # ATTACK - DNS Admin
 New-DNSAdmin -VulnUsers $VulnUsers 
 
+# ATTACK - Network Configuration Operator
+New-NetworkConfigOperator -VulnUsers $VulnUsers
+
 # ATTACK - Weak Kerberos Encryption
 Enable-AllKerbEncryptionTypes 
 New-DESKerberosUser -VulnUsers $VulnUsers 

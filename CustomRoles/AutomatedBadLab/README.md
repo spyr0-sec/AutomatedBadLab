@@ -68,6 +68,7 @@ AutomatedBadLab is also supported in Root / Child Domains and Forest scenarios. 
         - Owner rights
     - Constrained / Unconstrained Delegation Attacks
     - DNSAdmins (No longer exploitable)
+    - Network Operators Group Priv Esc
     - Group Policy Passwords
     - Users with Reversable Password Encryption
     - PowerShell Web Access (PSWA)
