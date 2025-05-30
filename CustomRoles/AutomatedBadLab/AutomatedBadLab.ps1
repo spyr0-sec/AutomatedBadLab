@@ -128,6 +128,9 @@ Add-LocalPrivilegedGroupMembers -VulnUsers $VulnUsers
 # ATTACK - PowerShell Web Access
 Enable-PowerShellWebAccess -VulnUsers $VulnUsers
 
+# ATTACK - BadSuccessor DMSA Attack (Requires 2025 DC)
+New-BadSuccessor -VulnUsers $VulnUsers
+
 # ATTACK - Protected Users Bypass
 Enable-ProtectedAdmin
 
@@ -147,6 +150,9 @@ try {
 
 # ATTACK - PrintNightmare Vulnerabilities
 Enable-PrintNightmare
+
+# ATTACK - Weak SYSTEM Reg Hive 
+New-SystemRegKey
 
 # Machine Attack Vectors ------------------------------------------------------
 
