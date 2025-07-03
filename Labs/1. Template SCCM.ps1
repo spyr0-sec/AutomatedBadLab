@@ -28,7 +28,7 @@ Copy-Item -Path $ABLCustomRolesFilePath -Destination $labSources -Force -Recurse
 #--------------------------------------------------------------------------------------------------------------------
 # LAB CREATION
 # Create our lab using HyperV (Azure is also supported)
-New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
+New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV -ReferenceDiskSizeInGB 100
 
 # Create a domain admin account to handle Windows machine creation / Active Directory configration. 
 # NOTE: Make sure these passwords are the same and needs to be complex
