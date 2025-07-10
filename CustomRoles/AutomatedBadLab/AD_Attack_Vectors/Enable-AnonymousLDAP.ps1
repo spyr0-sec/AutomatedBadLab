@@ -5,26 +5,28 @@ Function Enable-AnonymousLDAP {
     Write-Log -Message "Allowing Anonymous read access to AD schema via LDAP"
 
     # Domain Distinguished Name
-    $ADDN = (Get-ADDomain).DistinguishedName
+    $DomainDN = (Get-ADDomain).DistinguishedName
 
     # RootDSE Path
-    $RootDNPath = "AD:\$ADDN"
+    $RootDSE = New-Object System.DirectoryServices.DirectoryEntry("LDAP://$DomainDN")
 
     # Get Anonymous Logon SID
-    $anonymousId = New-Object System.Security.Principal.NTAccount("NT AUTHORITY\ANONYMOUS LOGON")
+    $anonymousSID = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-7')
 
     # Set the rights and type
-    $aclRights = [System.DirectoryServices.ActiveDirectoryRights]::ReadProperty -bor [System.DirectoryServices.ActiveDirectoryRights]::GenericExecute
+    $aclRights = [System.DirectoryServices.ActiveDirectoryRights]::GenericRead
     $allowType = [System.Security.AccessControl.AccessControlType]::Allow
 
     # Will also set the permissions to all child objects
     $secInheritanceAll = [System.DirectoryServices.ActiveDirectorySecurityInheritance]::All
 
-    # Set the permissions
-    $Ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($anonymousId, $aclRights, $allowType, $secInheritanceAll)
-    $Acl = Get-Acl -Path $RootDNPath
+    # Add the new ACE to the ACL
+    $Ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($anonymousSID, $aclRights, $allowType, $secInheritanceAll)
+    $Acl = $RootDSE.ObjectSecurity
     $Acl.AddAccessRule($Ace)
-    Set-Acl -Path $RootDNPath -AclObject $Acl
+
+    $RootDSE.ObjectSecurity = $Acl
+    $RootDSE.CommitChanges()
 
     # Configure DSHeuristics
     $DsPath = "CN=Directory Service,CN=Windows NT,CN=Services,CN=Configuration,$ADDN"
