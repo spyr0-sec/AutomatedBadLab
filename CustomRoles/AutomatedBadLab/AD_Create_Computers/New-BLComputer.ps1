@@ -38,8 +38,8 @@ Function New-BLComputer {
                 -Description $Description `
                 -Location "Building $(Get-Random -Minimum 1 -Maximum 10), Floor $(Get-Random -Minimum 1 -Maximum 5)" `
                 -ManagedBy $Owner `
-                -OperatingSystem "Windows $('XP', 'Vista', '7', '8', '8.1', '10', '11' | Get-Random)" `
-                -OperatingSystemVersion "$(Get-Random -Minimum 5 -Maximum 10).0.$(Get-Random -Minimum 10000 -Maximum 12000)" `
+                -OperatingSystem "Windows $('10', '11' | Get-Random)" `
+                -OperatingSystemVersion "$(Get-Random -Minimum 10 -Maximum 11).0 ($(Get-Random -Minimum 10000 -Maximum 12000))" `
                 -OperatingSystemServicePack "Service Pack $(Get-Random -Minimum 0 -Maximum 3)" `
         }
         Else {
@@ -56,8 +56,8 @@ Function New-BLComputer {
                 -Description $Description `
                 -Location "Building $(Get-Random -Minimum 1 -Maximum 10), Floor $(Get-Random -Minimum 1 -Maximum 5)" `
                 -ManagedBy $Owner `
-                -OperatingSystem "Windows Server $('2008', '2008 R2', '2012', '2012 R2', '2016', '2016 R2', '2019', '2019 R2', '2022' | Get-Random) $('Standard', 'Datacenter' | Get-Random)" `
-                -OperatingSystemVersion "$(Get-Random -Minimum 5 -Maximum 10).0.$(Get-Random -Minimum 10000 -Maximum 25000)" `
+                -OperatingSystem "Windows Server $('2016', '2016 R2', '2019', '2019 R2', '2022' | Get-Random) $('Standard', 'Datacenter' | Get-Random)" `
+                -OperatingSystemVersion "$(Get-Random -Minimum 10 -Maximum 11).0 ($(Get-Random -Minimum 20000 -Maximum 25000))" `
                 -OperatingSystemServicePack "Service Pack $(Get-Random -Minimum 0 -Maximum 3)" `
         }
 
