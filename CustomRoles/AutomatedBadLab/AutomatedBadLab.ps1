@@ -22,6 +22,9 @@ Write-Log -Message "(Mis)Configuring $((Get-ADDomain).DNSRoot)"
 # Weaken AD Password Policies
 Set-WeakPasswordPolicy
 
+# Enable all Kerberos Encryption types - WARNING! RC4 no longer supported in 2025
+Enable-AllKerbEncryptionTypes 
+
 # Organizational Unit Creation and structure
 New-BLOUStructure
 
@@ -94,9 +97,8 @@ New-DNSAdmin -VulnUsers $VulnUsers
 # ATTACK - Network Configuration Operator
 New-NetworkConfigOperator -VulnUsers $VulnUsers
 
-# ATTACK - Weak Kerberos Encryption. WARNING unable to request ST via impacket / nxc - https://github.com/fortra/impacket/blob/master/impacket/krb5/kerberosv5.py#L168-L173 
-# Enable-AllKerbEncryptionTypes 
-# New-DESKerberosUser -VulnUsers $VulnUsers 
+# ATTACK - DES Kerberos Encryption enabled user
+New-DESKerberosUser -VulnUsers $VulnUsers 
 
 # ATTACK - Reverable Password Encryption
 New-ReversablePasswordUser -VulnUsers $VulnUsers 
