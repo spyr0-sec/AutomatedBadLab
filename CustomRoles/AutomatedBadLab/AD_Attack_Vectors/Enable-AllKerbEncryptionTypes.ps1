@@ -8,13 +8,13 @@ Function Enable-AllKerbEncryptionTypes {
 
     New-GPO -Name $KerbEncGPOName -Comment $GPODescription
 
-    # Set the required registry key for the Kerberos encryption type to allow DES
+    # Set the required registry key to support all Kerberos encryption types
     $params = @{
         Name      = $KerbEncGPOName
         Key       = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters'
         ValueName = 'SupportedEncryptionTypes'
         Type      = 'Dword'
-        Value     = 30
+        Value     = 31
     }
 
     Set-GPRegistryValue @params
