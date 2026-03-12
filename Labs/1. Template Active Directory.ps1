@@ -1,21 +1,14 @@
 #--------------------------------------------------------------------------------------------------------------------
 # CHANGEME - Global parameters
 $LabName        = 'ActiveDirectoryTemplate'
-$Subnet         = '10.10.X.0/24'
 
 # CHANGEME - Active Directory parameters
 $DomainUser     = 'domainadmin'
 $DomainPass     = 'complexpassword'
-$Domain         = 'domain.tld' 
+$Domain         = 'domain.tld'
 
 # Path to our custom provisioning scripts
 $CustomScripts  = 'C:\AutomatedBadLab\PostInstallationActivities'
-
-# Port forward RDP access to the lab machine to make it accessible externally
-#$LPORT = "3490"
-#$RHOST = "10.10.0.100"
-
-#netsh interface portproxy add v4tov4 listenport=$LPORT listenaddress=0.0.0.0 connectport=3389 connectaddress=$RHOST
 
 #--------------------------------------------------------------------------------------------------------------------
 # CUSTOMROLE INSTALLATION
@@ -29,29 +22,28 @@ Copy-Item -Path $ABLCustomRolesFilePath -Destination $labSources -Force -Recurse
 # Create our lab using HyperV (Azure is also supported)
 New-LabDefinition -Name $LabName -DefaultVirtualizationEngine HyperV
 
-# For Internal networks, just need a name and subnet space. Internet Network is a static NAT network
-Add-LabVirtualNetworkDefinition -Name $labName -AddressSpace $Subnet
-Add-LabVirtualNetworkDefinition -Name 'Internet' -AddressSpace 10.10.0.0/24 # REMOVE IF INTERNAL ONLY
+# Use NetNat to provide Internet access within an isolated network
+Add-LabVirtualNetworkDefinition -Name $LabName -UseNat
 
 # For any roles requiring ISOs, make AL aware of the location
 Add-LabIsoImageDefinition -Name Office2016 -Path "$labSources\ISOs\Office 2016 Professional.iso"
 
-# Create a domain admin account to handle Windows machine creation / Active Directory configration. 
+# Create a domain admin account to handle Windows machine creation / Active Directory configration.
 Set-LabInstallationCredential -Username $DomainUser -Password $DomainPass
 Add-LabDomainDefinition -Name $Domain -AdminUser $DomainUser -AdminPassword $DomainPass
 
 #--------------------------------------------------------------------------------------------------------------------
 # DEFAULT MACHINE PARAMETERS
-# Giving DomainName will automatically make all machines join the domain 
+# Giving DomainName will automatically make all machines join the domain
 # These can be overwritten as seen for WS01 - Windows 10 is wanted rather than Server 2019
 $PSDefaultParameterValues = @{
-    'Add-LabMachineDefinition:Network'          = $labName
+    'Add-LabMachineDefinition:Network'          = $LabName
     'Add-LabMachineDefinition:ToolsPath'        = "$labSources\Tools"
-    'Add-LabMachineDefinition:DomainName'       = $Domain 
+    'Add-LabMachineDefinition:DomainName'       = $Domain
     'Add-LabMachineDefinition:MinMemory'        = 1GB
     'Add-LabMachineDefinition:Memory'           = 4GB
     'Add-LabMachineDefinition:MaxMemory'        = 8GB
-    'Add-LabMachineDefinition:OperatingSystem'  = 'Windows Server 2019 Standard Evaluation (Desktop Experience)'
+    'Add-LabMachineDefinition:OperatingSystem'  = 'Windows Server 2025 Standard Evaluation (Desktop Experience)'
 }
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -74,16 +66,9 @@ $Roles += $DCRole
 $Roles += Office2016
 
 #--------------------------------------------------------------------------------------------------------------------
-# NETWORKING - https://automatedlab.org/en/latest/Wiki/Basic/networksandaddresses/
-# Give Workstation Internet access via NAT switch
-$WS1NICs = @()
-$WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch $LabName
-$WS1NICs += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
-
-#--------------------------------------------------------------------------------------------------------------------
 # MACHINE CREATION - https://automatedlab.org/en/latest/Wiki/Basic/addmachines/
 # Create the machine definition with its custom name, networking, Roles and Post-install activities
-Add-LabMachineDefinition -Name DC01 -Roles RootDC -IpAddress $DCIP -PostInstallationActivity $ADPrep
+Add-LabMachineDefinition -Name DC01 -Roles RootDC -PostInstallationActivity $ADPrep
 
 # For the workstation, use Get-LabAvailableOperatingSystem to get correct OS name
 $WS1PostInstallJobs = @() # Will execute in order
@@ -91,7 +76,7 @@ $WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveFirstRu
 $WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole RemoveWindowsDefender
 $WS1PostInstallJobs += Get-LabPostInstallationActivity -CustomRole UpdateWindows
 
-Add-LabMachineDefinition -Name WS01 -NetworkAdapter $WS1NICs -OperatingSystem 'Windows 10 Enterprise Evaluation' -PostInstallationActivity $WS1PostInstallJobs
+Add-LabMachineDefinition -Name WS01 -OperatingSystem 'Windows 10 Enterprise Evaluation' -PostInstallationActivity $WS1PostInstallJobs
 
 # Install our lab, has flags for level of output
 Install-Lab # -Verbose -Debug

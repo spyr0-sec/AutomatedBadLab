@@ -5,19 +5,12 @@ PowerShell scripts to create sandboxed or vulnerable environments using HyperV a
 [Run the install script](./Functions/Install-AutomatedBadLab.ps1)
 
 ## Building Labs
-The easiest way to get a machine is to start with is to run [Standalone Template](./Labs/1.%20Template%20Internet%20Connected%20Standalone.ps1)
-1. (First time only) Create a Windows 11 Base image to make subsequent builds much quicker
-2. Create a Windows 11 Machine
-3. Run a Windows Update Scheduled task to install all available updates
-
 To build a vulnerable Active Directory, run the [AutomatedBadLab Template](./Labs/1.%20Template%20AutomatedBadLab.ps1). 
 
 Each [Custom Role](./CustomRoles/AutomatedBadLab/README.md) comes with its own README and in some cases a Lab Template to demonstrate its use.
 
 ## Notes
-If you are running AutomatedBadLab on a Virtual Machine, the recomendation is to build a DHCP / Internet Router VM via the [Router Template](./Labs/1.%20Template%20Router.ps1).
-
-Example [Active Directory Template](./Labs/1.%20Template%20Active%20Directory.ps1) which uses the dual-NIC configuration.
+AutomatedLab > v5.60.0 is required due to the use of NAT enabled vSwitches
 
 [RDCMan](https://learn.microsoft.com/en-us/sysinternals/downloads/rdcman) is recommended for managing RDP connection profiles. AutomatedLab updates the local hosts file during the build process, so only NETBIOS names are required to connect to lab machines.
 

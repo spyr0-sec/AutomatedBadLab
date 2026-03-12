@@ -10,7 +10,6 @@ $LabName         = 'StandaloneTemplate'
 $AdminUser       = 'wsadmin'
 $AdminPass       = 'complexpassword'
 $MachineName     = 'WS01'
-$Subnet          = '10.10.X.0/24'
 
 # Get-LabAvailableOperatingSystem will list all available OSes to you
 $OperatingSystem = 'Windows 10 Enterprise Evaluation'
@@ -22,11 +21,9 @@ The rest of the template follows a similar structure which hopefully should make
 - Pull in any local Custom Role changes
 - Create the lab definition
 - Create local / domain user accounts
-- Configure networking
+- Create a vSwitch with a NAT Gateway for external access
 - Provide default machine parameters
-- Create each machine definition
-    - Add CustomRoles
-    - Add NetworkAdapters
+- Create each machine definition with their CustomRoles
 - Install lab
 - Execute post-install scripts
 - Display deployment summary
@@ -44,8 +41,6 @@ These rough timings are assuming base images have already been created for the s
 - Single Machine
     - Client OS (~10 minutes)
     - Server OS (<10 minutes)
-- Router 
-    - Windows Server with DHCP Role (~20 minutes)
 - Active Directory
     - Domain Controller + Certificate Authority + Workstation (~60 minutes)
     - AutomatedBadLab AD / ADCS / Trust Provisioning Roles (+20 minutes)

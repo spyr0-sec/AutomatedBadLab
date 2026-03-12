@@ -1,7 +1,6 @@
 #--------------------------------------------------------------------------------------------------------------------
 # CHANGEME - Global parameters
 $LabName         = 'EnterpriseLab'
-$Subnet          = '10.10.X.0/24'
 
 # CHANGEME - Credential parameters
 $DomainUser      = 'domadmin'
@@ -19,9 +18,6 @@ $SecondDC        = 'ASDC01'
 
 # CHANGEME - Certificate Authority parameters
 $CAName          = 'EvilCorpCA'
-
-# CHANGEME - Operating System parameters
-$OperatingSystem = 'Windows Server 2022 Standard Evaluation' # Core has less footprint
 
 # Domain Hash Table
 $DCDictionary = @{
@@ -51,18 +47,18 @@ Add-LabDomainDefinition -Name $RootDomain -AdminUser $DomainUser -AdminPassword 
 Add-LabDomainDefinition -Name $ChildDomain -AdminUser $DomainUser -AdminPassword $DomainPass
 Add-LabDomainDefinition -Name $SecondDomain -AdminUser $DomainUser -AdminPassword $DomainPass
 
-# NETWORKING - Simple flat internal network
-Add-LabVirtualNetworkDefinition -Name $labName -AddressSpace $Subnet
+# Use NetNat to provide Internet access within an isolated network
+Add-LabVirtualNetworkDefinition -Name $LabName -UseNat
 
 #--------------------------------------------------------------------------------------------------------------------
-# Defining default parameter values, as these ones are the same for all the machines. 
+# Defining default parameter values, as these ones are the same for all the machines.
 $PSDefaultParameterValues = @{
-    'Add-LabMachineDefinition:Network'          = $labName
+    'Add-LabMachineDefinition:Network'          = $LabName
     'Add-LabMachineDefinition:ToolsPath'        = "$labSources\Tools"
     'Add-LabMachineDefinition:MinMemory'        = 1GB
     'Add-LabMachineDefinition:Memory'           = 4GB
     'Add-LabMachineDefinition:MaxMemory'        = 8GB
-    'Add-LabMachineDefinition:OperatingSystem'  = $OperatingSystem
+    'Add-LabMachineDefinition:OperatingSystem'  = 'Windows Server 2022 Standard Evaluation' # Core has less footprint
 }
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -77,7 +73,6 @@ $CARole = Get-LabMachineRoleDefinition -Role CaRoot @{
 
 # AUTOMATEDBADLAB ROLES
 $AutomatedBadLabRole = Get-LabPostInstallationActivity -CustomRole AutomatedBadLab
-
 $AutomatedBadLabADCSRole = Get-LabPostInstallationActivity -CustomRole AutomatedBadLabADCS
 
 #--------------------------------------------------------------------------------------------------------------------
