@@ -33,13 +33,19 @@ Enable-LabHostRemoting -Force
 New-LabSourcesFolder -DriveLetter C
 
 $DownloadISOs = Read-Host "[!] Do you want to download Evaluation ISOs? (Y/N)"
-if ($DownloadISOs -eq "Y") {
-    & "$PSScriptRoot\Get-EvaluationISOs.ps1"
+if ($DownloadISOs -match '^\s*[Yy]') {
+    $DownloadAllISOs = Read-Host "[!] Do you want to download ALL Evaluation ISOs without prompts? (Y/N)"
+    if ($DownloadAllISOs -match '^\s*[Yy]') {
+        & "$PSScriptRoot\Get-EvaluationISOs.ps1" -All
+    }
+    else {
+        & "$PSScriptRoot\Get-EvaluationISOs.ps1"
+    }
 }
 
 If ($RestartRequired) {
     $Restart = Read-Host "[!] AutomatedLab setup complete! Do you want to restart the machine now? (Y/N)"
-    if ($Restart -eq "Y") {
+    if ($Restart -match '^\s*[Yy]') {
         Restart-Computer -Force
     }
 }
