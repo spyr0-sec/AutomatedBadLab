@@ -1,10 +1,24 @@
-﻿function Get-ISO {
+﻿param(
+    # Download every ISO without confirming each one
+    [switch]$All
+)
+
+function Get-ISO {
     param(
         [string]$Name,
         [string]$Url,
         [string]$Path,
         [string]$Sha256
     )
+
+    # 0. Confirm the user wants this ISO before doing any work (unless downloading all)
+    if (-not $All) {
+        $choice = Read-Host "[?] Download ${Name}? (Y/N)"
+        if ($choice -notmatch '^\s*[Yy]') {
+            Write-Host "  [-] Skipping $Name"
+            return
+        }
+    }
 
     Write-Host "[+] Processing $Name"
 
@@ -18,7 +32,7 @@
             return
         }
         else {
-            Write-Host "  [!] Checksum mismatch — re-downloading ISO"
+            Write-Host "  [!] Checksum mismatch — confirm URL and Hash before trying again"
             Remove-Item $Path -Force
         }
     }
@@ -47,23 +61,25 @@
 $LocalIsoPath = "$(Get-LabSourcesLocation)\ISOs"
 Write-Host "[+] Downloading Windows ISOs to $LocalIsoPath"
 
-# Windows 11 22H2
-Get-ISO -Name "Windows 11 22H2" `
-        -Url "https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66751/22621.525.220925-0207.ni_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso" `
-        -Path "$LocalIsoPath\Windows11_22H2_Enterprise_Evaluation.iso" `
-        -Sha256 "EBBC79106715F44F5020F77BD90721B17C5A877CBC15A3535B99155493A1BB3F"
+# Windows ISO Direct Download URLs sourced from https://github.com/dockur/windows/blob/master/src/define.sh
 
-# Windows 10 22H2
-Get-ISO -Name "Windows 10 22H2" `
+# Windows 11 Enterprise
+Get-ISO -Name "Windows 11 Enterprise" `
+        -Url "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso" `
+        -Path "$LocalIsoPath\Windows11_Enterprise_Evaluation.iso" `
+        -Sha256 "A61ADEAB895EF5A4DB436E0A7011C92A2FF17BB0357F58B13BBC4062E535E7B9"
+
+# Windows 10 Enterprise
+Get-ISO -Name "Windows 10 Enterprise" `
         -Url "https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66750/19045.2006.220908-0225.22h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso" `
-        -Path "$LocalIsoPath\Windows10_22H2_Enterprise_Evaluation.iso" `
+        -Path "$LocalIsoPath\Windows10_Enterprise_Evaluation.iso" `
         -Sha256 "EF7312733A9F5D7D51CFA04AC497671995674CA5E1058D5164D6028F0938D668"
 
-# Windows Server 2025 (Insider — URL may break)
+# Windows Server 2025
 Get-ISO -Name "Windows Server 2025" `
-        -Url "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26100.1.240331-1435.ge_release_SERVER_EVAL_x64FRE_en-us.iso" `
+        -Url "https://software-static.download.prss.microsoft.com/dbazure/998969d5-f34g-4e03-ac9d-1f9786c66749/26100.32230.260111-0550.lt_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso" `
         -Path "$LocalIsoPath\Windows_Server_2025_Evaluation.iso" `
-        -Sha256 "16442D1C0509BCBB25B715B1B322A15FB3AB724A42DA0F384B9406CA1C124ED4"
+        -Sha256 "7B052573BA7894C9924E3E87BA732CCD354D18CB75A883EFA9B900EA125BFD51"
 
 # Windows Server 2022
 Get-ISO -Name "Windows Server 2022" `
@@ -85,9 +101,15 @@ Get-ISO -Name "Windows Server 2016" `
 
 # Windows Server 2012 R2
 Get-ISO -Name "Windows Server 2012 R2" `
-        -Url "http://care.dlservice.microsoft.com/dl/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO" `
-        -Path "$LocalIsoPath\Windows_Server_2012_Evaluation.iso" `
+        -Url "https://download.microsoft.com/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO" `
+        -Path "$LocalIsoPath\Windows_Server_2012_R2_Evaluation.iso" `
         -Sha256 "6612B5B1F53E845AACDF96E974BB119A3D9B4DCB5B82E65804AB7E534DC7B4D5"
+
+# Windows Server 2008
+Get-ISO -Name "Windows Server 2008" `
+        -Url "https://download.microsoft.com/download/4/1/D/41DEA7E0-B30D-4012-A1E3-F24DC03BA1BB/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso" `
+        -Path "$LocalIsoPath\Windows_Server_2008_Evaluation.iso" `
+        -Sha256 "30832AD76CCFA4CE48CCB936EDEFE02079D42FB1DA32201BF9E3A880C8ED6312"
 
 # SQL Server 2019
 Get-ISO -Name "SQL Server 2019" `
@@ -110,8 +132,7 @@ Get-ISO -Name "Ubuntu 24.04.1 Server" `
 # Kali Linux 2026.1
 Get-ISO -Name "Kali Linux 2026.1" `
         -Url "https://cdimage.kali.org/kali-2026.1/kali-linux-2026.1-installer-amd64.iso" `
-        -Path "$LocalIsoPath\kali-linux-2026.1-installer-amd64.iso" `
-        -Sha256 "271477ad6ea2676c7346576971b9acc2d32fabd9c2bbaf0e6302397626149306"
+        -Path "$LocalIsoPath\Kali_2026_1.iso" `
+        -Sha256 "271477AD6EA2676C7346576971B9ACC2D32FABD9C2BBAF0E6302397626149306"
 
 Write-Host "[+] ISO processing complete!"
-
