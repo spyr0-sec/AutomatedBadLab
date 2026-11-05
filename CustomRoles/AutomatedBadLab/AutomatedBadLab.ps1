@@ -156,6 +156,9 @@ Enable-PrintNightmare
 # ATTACK - Weak SYSTEM Reg Hive 
 New-SystemRegKey
 
+# ATTACK - TimeRoast Vulnerable Users
+New-TimeRoastUser -VulnUsers $VulnUsers
+
 # Machine Attack Vectors ------------------------------------------------------
 
 # ATTACK - Enable NTLMv1
