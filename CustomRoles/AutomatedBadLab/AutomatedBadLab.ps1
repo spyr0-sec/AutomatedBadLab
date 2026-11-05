@@ -156,7 +156,7 @@ Enable-PrintNightmare
 # ATTACK - Weak SYSTEM Reg Hive 
 New-SystemRegKey
 
-# ATTACK - TimeRoast Vulnerable Users
+# ATTACK - TimeRoast User
 New-TimeRoastUser -VulnUsers $VulnUsers
 
 # Machine Attack Vectors ------------------------------------------------------
