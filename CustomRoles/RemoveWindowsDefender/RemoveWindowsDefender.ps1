@@ -28,8 +28,8 @@ Expand-Archive -Path "C:\Windows\Temp\DefenderRemover.zip" -DestinationPath "C:\
 
 Write-Log -Message "Downloaded and extracted the Windows Defender Remover script."
 
-# Define the path to your original batch file
-$batchFilePath = "C:\Windows\Temp\windows-defender-remover-main\Script_Run.bat"
+# Define the path to the Windows Defender Remover batch file
+$batchFilePath = "C:\Windows\Temp\windows-defender-remover-main\script\Script_Run.cmd"
 
 # Enable Scheduled Task history logging for debugging
 wevtutil set-log Microsoft-Windows-TaskScheduler/Operational /enabled:true
@@ -37,7 +37,7 @@ wevtutil set-log Microsoft-Windows-TaskScheduler/Operational /enabled:true
 Write-Log -Message "Creating Windows Defender Removal Scheduled Task" 
 
 # Create the scheduled task action
-$Action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $batchFilePath Y"
+$Action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $batchFilePath"
 
 # Get the time a minute from now
 $Time = (Get-Date).AddMinutes(1)
